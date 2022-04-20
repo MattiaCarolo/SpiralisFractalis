@@ -1,0 +1,12 @@
+*.csv
+*.pyc
+*.txt 
+*.wxt
+*.jar
+*.zip
+*.jpg
+graphics/__pycache__
+*.pyc
+*.swp
+Images/
+venv/
