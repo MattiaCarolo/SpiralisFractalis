@@ -11,30 +11,7 @@ from PIL import Image
 from IPython.core.display import display, HTML
 from IPython.display import IFrame
 
-
-
-## Built-In Transformations
-def Scale(s:float):
-    return np.array([[s, 0, 0],[0, s, 0],[0, 0, 1]], dtype=np.float64)
-def Translate(a:float, b:float):
-    return np.array([[1, 0, a],[0, 1, b],[0, 0, 1]], dtype=np.float64)
-def Rotate(theta:float):
-    return np.array([[np.cos(theta), -np.sin(theta), 0],[np.sin(theta), np.cos(theta), 0],[0, 0, 1]], dtype=np.float64)
-def ShearX(t:float):
-    return np.array([[1, t, 0],[0,1, 0],[0, 0, 1]], dtype=np.float64)
-def ShearY(t:float):
-    return np.array([[1, 0, 0],[t,1, 0],[0, 0, 1]], dtype=np.float64)
-def ScaleX(s:float):
-    return np.array([[s, 0, 0],[0, 1, 0],[0, 0, 1]], dtype=np.float64)
-def ScaleY(s:float):
-    return np.array([[1, 0, 0],[0, s, 0],[0, 0, 1]], dtype=np.float64)
-def ScaleXY(s:float, t:float):
-    return np.array([[s, 0, 0],[0,t, 0],[0, 0, 1]], dtype=np.float64)
-
-
-
-
-
+from Transformations import *
 
 
 ## Built-In Figures
@@ -44,11 +21,6 @@ def rect(n):
 Line = np.array([ [0., 0., 1.], [1., 0., 1.] ]).T
 
 XBox = np.array([ [0., 0., 1.], [1., 0., 1.], [1., 1., 1.], [0., 1., 1.], [0., 0., 1.], [0.5, 0., 1.], [0.5, 1., 1.], [1., 1., 1.], [1., 0.5, 1.], [0., 0.5, 1.], [0., 0., 1.], [1/8, 1/8, 1.], [1/8-1/16, 1/8+1/16, 1.]]).T
-
-
-
-
-
 
 
 def mprint(mat, leftspace=1, fmt="g"):
@@ -61,12 +33,6 @@ def mprint(mat, leftspace=1, fmt="g"):
             print(("{:"+str(col_maxes[i])+fmt+"}").format(y), end="  ")
         print("|")
 
-
-
-
-
-
-
 def choose_random_index(weights):
     r = rd.uniform(0, 1)
     t = 0
@@ -75,10 +41,6 @@ def choose_random_index(weights):
         t += 1
         s = s + weights[t]
     return min(t, len(weights) - 1)
-
-
-
-
 
 def opNorm(A):
     G = array(A[:2,:2], dtype=float)
@@ -127,9 +89,10 @@ def generate_figures(n, figures, transformations):
 def plot_figures(figures:List[np.ndarray], size:int=4, width:float=1.5, color:str='blue'):
     lines = [ [(1.1, 1.1), (1.1, 1.1)] ]
     for M in figures:
+        print("porco dio")
         lines = lines + [[ (M[0][i], M[1][i]), (M[0][i+1], M[1][i+1]) ] for i in np.arange(len(np.transpose(M))-1)]
     lc = mc.LineCollection(lines[1:], linewidths=width, color=color)
-    fig, ax = plt.subplots(figsize=(size,size))
+    fig, ax = plt.subplots(figsize=(size,size)) 
     ax.add_collection(lc)
     ax.set_aspect('equal')
     ax.autoscale()
@@ -170,10 +133,6 @@ def find_bounds(transformations, weights=None):
     xmin, xmax, ymin, ymax = np.min(G[0]), np.max(G[0]), np.min(G[1]), np.max(G[1])
     errX, errY = (xmax-xmin)/10, (ymax-ymin)/10
     return np.array([xmin-errX, xmax+errX, ymin-errY, ymax+errY], dtype=np.float64)
-
-
-
-
 
 
 

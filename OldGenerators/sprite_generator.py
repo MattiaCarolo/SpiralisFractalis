@@ -26,22 +26,22 @@ create_sprite method
 @draw = If I understood correctly is the image in which we draw
 @size = Size of the whole sprite
 
-same work of main but here we introduce @element. el
+same work of main but here we introduce @i counter. @i serves as an
 '''
 def create_sprite(border, draw, size):
     x0, y0, x1, y1 = border  
     squareSize = (x1-x0)/size  
     randColors = [rc(), rc(), rc(), (0,0,0), (0,0,0), (0,0,0)]  
-    i = 0
+    element = 0
     for y in range(0, size):
-        i = 0
+        element = 0
         for x in range(0, size):      
             topLeftX = x*squareSize + x0      
             topLeftY = y*squareSize + y0      
             botRightX = topLeftX + squareSize      
             botRightY = topLeftY + squareSize
-            create_mirrored_square((topLeftX, topLeftY, botRightX, botRightY), draw, random.choice(randColors), i, size)  
-            i = i + 1    
+            create_mirrored_square((topLeftX, topLeftY, botRightX, botRightY), draw, random.choice(randColors), element, size)  
+            element = element + 1    
 
 '''
 main method 
@@ -76,7 +76,7 @@ def main(size, invaders, imgSize):
             botRightX = topLeftX + invaderSize - padding      
             botRightY = topLeftY + invaderSize - padding
             create_sprite((topLeftX, topLeftY, botRightX, botRightY), draw, size) #does a similar thing tracing a grid for the sprite
-    origImage.save("Dump/"+str(size)+"x"+str(size)+"-"+str(invaders)+"-"+str(imgSize)+".jpg")
+    origImage.save("Images/Sprites/"+str(size)+"x"+str(size)+"-"+str(invaders)+"-"+str(imgSize)+".jpg")
 
 if __name__ == "__main__":  
     main(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))

@@ -11,10 +11,10 @@ def draw():
     background(0.95, 0.95, 0.95, 1.0)
     color(0, 0, 0, 0.01)
 
-    for k in range(100):
+    for k in range(10):
         step = 100 / 4
-        for j in range(0, width+100, 100):
-            for i in range(0, height+100, 100):
+        for j in range(0, width+10, 10):
+            for i in range(0, height+10, 10):
                 r = randint(-4, 4)
                 offset_x = step / r if r != 0 else 0
                 r = randint(-4, 4)
