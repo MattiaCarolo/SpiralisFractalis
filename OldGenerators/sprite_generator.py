@@ -76,7 +76,7 @@ def main(size, invaders, imgSize):
             botRightX = topLeftX + invaderSize - padding      
             botRightY = topLeftY + invaderSize - padding
             create_sprite((topLeftX, topLeftY, botRightX, botRightY), draw, size) #does a similar thing tracing a grid for the sprite
-    origImage.save("Images/Sprites/"+str(size)+"x"+str(size)+"-"+str(invaders)+"-"+str(imgSize)+".jpg")
+    origImage.save("../Images/Sprites/"+str(size)+"x"+str(size)+"-"+str(invaders)+"-"+str(imgSize)+".jpg")
 
 if __name__ == "__main__":  
     main(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))

@@ -57,4 +57,4 @@ This will create a basic script from a template file to get you started.
 https://www.youtube.com/watch?v=YO-F3pPzVxw 
 
 
-Credits to : https://github.com/JakobGlock/Generative-Art
+Credits to : a
