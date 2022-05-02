@@ -1,22 +1,44 @@
-#! /usr/bin/env python
-# coding: utf-8
-
 from __future__ import division
 
 from json import load
 from PIL import Image, ImageDraw
 from random import uniform
 
-def process_file(transformations, width, height, iterations=1, outputfile='out.png'):
+def weightedmatrix2function(definition):
+    fract = dict()
+    #print(definition['fract'][0]['weights'])
+    for x in definition['fract']:
+        formulas = dict()
+        #print(x['weights'])
+        for y in x['matrixes']:
+            formulas["x"]= str(y[0][0]) + "" 
 
-    print(iterations)
-    for t in transformations:
-        print(t[0])
-    probability_join = sum(t[0] for t in transformations)
+
+
+def parse(filename):
+    with open(filename) as f:
+        definition = load(f)
+
+    # check for errors
+    if "width" not in definition: raise ValueError('"width" parameter missing')
+    if "height" not in definition: raise ValueError('"height" parameter missing')
+    if "iterations" not in definition: raise ValueError('"iterations" parameter missing')
+    if "fract" not in definition: raise ValueError('"fract" parameter missing')
+    weightedmatrix2function(definition)
+    return definition
+
+def makeNewPoint(x,y, mat):
+    x1 = (x * mat[0][0]) + (y * mat[0][1]) + mat[0][2]
+    y1 = (x * mat[1][0]) + (y * mat[1][1]) + mat[1][2]
+    return (x1,y1)
+
+def process_file(fract, width, height, iterations=1, outputfile='out.png'):
+
+    probability_join = sum(fract[0]['weights'])
 
     points = set([(0,0)])
 
-    # for each iteration // range needed to be iterable
+    # for each iteration
     for i in range(iterations):
         new_points = set()
 
@@ -26,12 +48,13 @@ def process_file(transformations, width, height, iterations=1, outputfile='out.p
             # decide on which transformation to apply
             rnd = uniform(0, probability_join)
             p_sum = 0
-            for probability, function in transformations:
-                p_sum += probability
+            i = 0
+            while(i < len(fract[0]['weights'])):
+                p_sum += fract[0]['weights'][i] # sum the single weights
                 if rnd <= p_sum:
-                    new_points.add(function(*point))
-                    print(type(function(*point)))
+                    new_points.add(makeNewPoint(*point,fract[0]['matrixes'][i]))
                     break
+                i = i + 1
 
         points.update(new_points)
 
@@ -60,23 +83,7 @@ def process_file(transformations, width, height, iterations=1, outputfile='out.p
     # save image file
     image.save( outputfile, "PNG" )
 
-def parse(filename):
-    with open(filename) as f:
-        definition = load(f)
 
-    # check for errors
-    if "width" not in definition: raise ValueError('"width" parameter missing')
-    if "height" not in definition: raise ValueError('"height" parameter missing')
-    if "iterations" not in definition: raise ValueError('"iterations" parameter missing')
-    if "transformations" not in definition: raise ValueError('"transformations" parameter missing')
-
-    def make_t_function(expression):
-        return lambda x,y: eval(expression, {'x': x, 'y': y})
-
-    definition['transformations'] = [(float(probability), make_t_function(expression) ) for
-                                     probability, expression in definition['transformations']]
-
-    return definition
 
 if __name__ == "__main__":
 
@@ -87,11 +94,10 @@ if __name__ == "__main__":
         # process each filename in input
         for filename in sys.argv[1:]:
             result = parse(filename)
-            process_file(result['transformations'], result['width'],
+            process_file(result['fract'], result['width'],
                          result['height'], result['iterations'],
                          filename.split('.')[0] + '.png')
     else:
         # read contents from stdin
         eval( sys.stdin.read() )
         process_file( transformation, width, height, iterations)
-
