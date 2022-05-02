@@ -9,6 +9,7 @@ from random import uniform
 
 def process_file(transformations, width, height, iterations=1, outputfile='out.png'):
 
+    
     probability_join = sum(t[0] for t in transformations)
 
     points = set([(0,0)])
