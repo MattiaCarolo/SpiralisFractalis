@@ -80,6 +80,17 @@ def process_file(fract, width, height, iterations=1, outputfile='out.png'):
         y = height - (point[1] - min_y) * scale
         draw.point((x,y))
 
+    """
+    WARNING
+
+    CREA BOIS MOLTO CICCIONI
+
+    for point in points:
+        x = (point[0] - min_x) * scale
+        y = height - (point[1] - min_y) * scale
+        draw.point((x,y))
+    """
+
     # save image file
     image.save( outputfile, "PNG" )
 
