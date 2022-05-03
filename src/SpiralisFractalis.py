@@ -3,6 +3,14 @@ from __future__ import division
 from json import load
 from PIL import Image, ImageDraw
 from random import uniform
+import random
+import string
+
+def get_random_string(length):
+    # choose from all lowercase letter
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str
 
 def weightedmatrix2function(definition):
     fract = dict()
@@ -24,7 +32,7 @@ def parse(filename):
     if "height" not in definition: raise ValueError('"height" parameter missing')
     if "iterations" not in definition: raise ValueError('"iterations" parameter missing')
     if "fract" not in definition: raise ValueError('"fract" parameter missing')
-    weightedmatrix2function(definition)
+    #weightedmatrix2function(definition)
     return definition
 
 def makeNewPoint(x,y, mat):
@@ -34,7 +42,7 @@ def makeNewPoint(x,y, mat):
 
 def process_file(fract, width, height, iterations=1, outputfile='out.png'):
 
-    probability_join = sum(fract[0]['weights'])
+    probability_join = sum(fract['weights'])
 
     points = set([(0,0)])
 
@@ -49,10 +57,10 @@ def process_file(fract, width, height, iterations=1, outputfile='out.png'):
             rnd = uniform(0, probability_join)
             p_sum = 0
             i = 0
-            while(i < len(fract[0]['weights'])):
-                p_sum += fract[0]['weights'][i] # sum the single weights
+            while(i < len(fract['weights'])):
+                p_sum += fract['weights'][i] # sum the single weights
                 if rnd <= p_sum:
-                    new_points.add(makeNewPoint(*point,fract[0]['matrixes'][i]))
+                    new_points.add(makeNewPoint(*point,fract['matrixes'][i]))
                     break
                 i = i + 1
 
@@ -86,8 +94,8 @@ def process_file(fract, width, height, iterations=1, outputfile='out.png'):
     CREA BOIS MOLTO CICCIONI
 
     for point in points:
-        x = (point[0] - min_x) * scale
-        y = height - (point[1] - min_y) * scale
+        x = (point[0] - min_x) * width_scale
+        y = height - (point[1] - min_y) * height_scale
         draw.point((x,y))
     """
 
@@ -111,4 +119,4 @@ if __name__ == "__main__":
     else:
         # read contents from stdin
         eval( sys.stdin.read() )
-        process_file( transformation, width, height, iterations)
+        process_file( fract, width, height, iterations)

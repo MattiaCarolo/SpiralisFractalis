@@ -1,15 +1,16 @@
 from components.App import App
+from SpiralisFractalis import *
 
 
-
-
-def main():
+def main(result):
     
     # root = tk.Tk()
     # MainFrame(root)
     # root.geometry("500x500")
-   
-    app = App()
+    for x in result['fract']:
+        process_file(x, result['width'], result['height'],
+            result['iterations'],'./IMGres/' + get_random_string(12) + '.png')
+    app = App(fractal=result)
     app.mainloop()
  
     # canv = Canvas(root, width=500, height=500, bg='white')
@@ -19,8 +20,8 @@ def main():
     # root.columnconfigure(3)
     # root.rowconfigure(3)
     # frame.pack()
-    #val1 = Label(root)
-    #val1.grid(row= 0, column=2)
+    # val1 = Label(root)
+    # val1.grid(row= 0, column=2)
     
     #scalas = [Scale(root, from_= 0, to= 100) for _ in range(2)]
     
@@ -54,4 +55,20 @@ def main():
     # root.mainloop()
 
 if __name__ == "__main__":
-    main()
+    import sys
+
+    # if there is one argument and it's not "-"
+    if len(sys.argv) > 1 and sys.argv[1] != '-':
+        # process each filename in input
+        for filename in sys.argv[1:]:
+            result = parse(filename)
+            main(result)
+            """
+            process_file(result['fract'], result['width'],
+                         result['height'], result['iterations'],
+                         filename.split('.')[0] + '.png')
+            """
+    else:
+        # read contents from stdin
+        eval( sys.stdin.read() )
+        process_file( fract, width, height, iterations)
