@@ -3,7 +3,7 @@ from tkinter import *
 from utils import get_img, get_images_paths
 from SpiralisFractalis import *
 
-IMAGES_PATH = ".\IMGres"
+IMAGES_PATH = "./IMGres/"
 
 
 def update_val(text, value: Label):
@@ -13,7 +13,6 @@ def update_val(text, value: Label):
 class App(Tk):
     def __init__(self,fractal):
         super().__init__()
-        
 
         self.main_frame = Frame(self)
         self.main_frame.pack(fill=BOTH, expand=1)
@@ -36,6 +35,12 @@ class App(Tk):
         self.images_frame = Frame(self.canvas)
 
         self.canvas.create_window((0, 0), window=self.images_frame, anchor="nw")
+        
+        self.image_paths = IMAGES_PATH
+
+        self.scalas = []
+        self.images = []
+        self.fill_image_frame()
 
         self.send_eval_btn = Button(
             self.main_frame,
@@ -43,13 +48,10 @@ class App(Tk):
             text="EVAL",
             width=5,
             height=2,
-            command=self.eval(fractal),
+            command=lambda x : self.eval(fractal),
         )
         self.send_eval_btn.pack(side=BOTTOM, fill=X)
 
-        self.scalas = []
-        self.images = []
-        self.fill_image_frame()
 
     def _on_mouse_wheel(self, event):
         self.canvas.yview_scroll(-1 * int((event.delta / 120)), "units")
@@ -69,12 +71,13 @@ class App(Tk):
             self.images.append(img)
 
     def eval(self,fractal):
-        for x in fractal['fract']:
-            process_file(x, fractal['width'], fractal['height'],
-             fractal['iterations'],'./IMGres/' + get_random_string(12) + '.png')
         self.get_eval_dict()
         self.nuke_the_childrens()
         self.fill_image_frame()
+        for x in fractal['fract']:
+            process_file(x, fractal['width'], fractal['height'],
+             fractal['iterations'],'./IMGres/' + get_random_string(12) + '.png')
+        
     
     def nuke_the_childrens(self):
         for child in self.images_frame.winfo_children():

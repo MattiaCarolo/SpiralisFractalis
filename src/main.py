@@ -7,9 +7,9 @@ def main(result):
     # root = tk.Tk()
     # MainFrame(root)
     # root.geometry("500x500")
-    for x in result['fract']:
-        process_file(x, result['width'], result['height'],
-            result['iterations'],'./IMGres/' + get_random_string(12) + '.png')
+    #for x in result['fract']:
+#        process_file(x, result['width'], result['height'],
+    #        result['iterations'],'./IMGres/' + get_random_string(12) + '.png')
     app = App(fractal=result)
     app.mainloop()
  
