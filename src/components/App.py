@@ -1,11 +1,9 @@
 from tkinter import ttk
 from tkinter import *
 from utils import get_img, get_images_paths
+from SpiralisFractalis import *
 
-
-
-
-IMAGES_PATH = ".\FractalsEA_FrontEnd\src\images"
+IMAGES_PATH = ".\IMGres"
 
 
 def update_val(text, value: Label):
@@ -13,7 +11,7 @@ def update_val(text, value: Label):
 
 
 class App(Tk):
-    def __init__(self):
+    def __init__(self,fractal):
         super().__init__()
         
 
@@ -45,7 +43,7 @@ class App(Tk):
             text="EVAL",
             width=5,
             height=2,
-            command=self.eval,
+            command=self.eval(fractal),
         )
         self.send_eval_btn.pack(side=BOTTOM, fill=X)
 
@@ -70,7 +68,10 @@ class App(Tk):
             self.scalas.append(scala)
             self.images.append(img)
 
-    def eval(self):
+    def eval(self,fractal):
+        for x in fractal['fract']:
+            process_file(x, fractal['width'], fractal['height'],
+             fractal['iterations'],'./IMGres/' + get_random_string(12) + '.png')
         self.get_eval_dict()
         self.nuke_the_childrens()
         self.fill_image_frame()
