@@ -48,7 +48,7 @@ class App(Tk):
             text="EVAL",
             width=5,
             height=2,
-            command=lambda x : self.eval(fractal),
+            command=lambda : self.eval(fractal),
         )
         self.send_eval_btn.pack(side=BOTTOM, fill=X)
 
@@ -73,11 +73,10 @@ class App(Tk):
     def eval(self,fractal):
         self.get_eval_dict()
         self.nuke_the_childrens()
-        self.fill_image_frame()
         for x in fractal['fract']:
             process_file(x, fractal['width'], fractal['height'],
              fractal['iterations'],'./IMGres/' + get_random_string(12) + '.png')
-        
+        self.fill_image_frame()
     
     def nuke_the_childrens(self):
         for child in self.images_frame.winfo_children():
