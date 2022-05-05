@@ -44,7 +44,7 @@ def makeNewPoint(x, y, transform):
 def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
     probability_join = 0
     for transform in fractal:
-        sum += transform[-1]
+        probability_join += transform[-1]
 
     #OLD: probability_join = sum(fractal['weights'])
 

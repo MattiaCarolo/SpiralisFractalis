@@ -1,4 +1,4 @@
-import cv2 as cv
+import cv2.cv2 as cv
 import os
 from PIL import ImageTk, Image
 

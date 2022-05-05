@@ -60,10 +60,10 @@ def main(fractals, width, height, numIterations):
 def getFractalsListFromParsedJson(parsedJSON):
     pop = list()
     for fractal in parsedJSON['fract']:
-        fractal = list()
+        nfractal = list()
         for i, x in enumerate(fractal["weights"]) :
             transform = fractal['matrixes'][i]
-            fractal.append(tuple([
+            nfractal.append([
                 transform[0][0],
                 transform[1][0],
                 transform[0][1],
@@ -71,9 +71,10 @@ def getFractalsListFromParsedJson(parsedJSON):
                 transform[0][2],
                 transform[1][2],
                 x
-            ]))
-        pop.append(fractal)
+            ])
+        pop.append(nfractal)
     return pop
+
 
 if __name__ == "__main__":
     import sys
@@ -86,9 +87,9 @@ if __name__ == "__main__":
             fractals = getFractalsListFromParsedJson(parsedJSON)
             width = parsedJSON['width']
             height = parsedJSON['height']
-            numIterations = ['iterations']
-            for fractal in fractals:
-                process_file(fractal, width, height, numIterations, filename.split('.')[0] + '.png')
+            numIterations = parsedJSON['iterations']
+            #for fractal in fractals:
+            #    process_file(fractal, width, height, numIterations, filename.split('.')[0] + '.png')
                 
             main(fractals, width, height, numIterations)
     else:

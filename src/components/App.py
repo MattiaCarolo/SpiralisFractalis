@@ -2,6 +2,7 @@ from tkinter import ttk
 from tkinter import *
 from utils import get_img, get_images_paths
 from SpiralisFractalis import *
+import components.ga as ga
 
 IMAGES_PATH = "./IMGres/"
 
@@ -75,10 +76,13 @@ class App(Tk):
         population = self.getRankedPopulation(evaluation, fractals)
         print(population)
 
+
+
         self.nuke_the_childrens()
 
         #TODO: call evolution method
         #that will return new fractals as list
+        fractals = ga.evolution(population)
 
         # init images
         for i, x in enumerate(fractals):
