@@ -71,11 +71,18 @@ class App(Tk):
             self.images.append(img)
 
     def eval(self,fractal):
-        self.get_eval_dict()
+        sorted_dict = self.get_eval_dict()
+        fractals = fractal['fract']
+        population = self.getPopulation(sorted_dict, fractals)
+        print(population)
+
         self.nuke_the_childrens()
-        for x in fractal['fract']:
+
+        # init images
+        for i, x in enumerate(fractal['fract']):
             process_file(x, fractal['width'], fractal['height'],
-             fractal['iterations'],'./IMGres/' + get_random_string(12) + '.png')
+             fractal['iterations'], get_name_index(i))
+
         self.fill_image_frame()
     
     def nuke_the_childrens(self):
@@ -89,5 +96,27 @@ class App(Tk):
         evaluations = {}
         for i in range(len(self.images)):
             evaluations[self.image_paths[i]] = self.scalas[i].get()
-        print(evaluations)
         return evaluations
+
+    def getPopulation(self, sorted_dict, fractals):
+        temp = str()
+        pop = list()
+        for key,rank in sorted_dict.items():
+            temp = int(str(key).split('/')[-1].split('.')[0])
+            print(temp)
+            fractal = list()
+            for i, x in enumerate(fractals[temp]["weights"]) :
+                transform = fractals[temp]['matrixes'][i]
+                fractal.append(tuple([
+                    transform[0][0],
+                    transform[1][0],
+                    transform[0][1],
+                    transform[1][1],
+                    transform[0][2],
+                    transform[1][2],
+                    x
+                ]))
+            pop.append(tuple([
+                fractal, rank
+            ]))
+        return pop

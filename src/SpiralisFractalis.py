@@ -6,11 +6,12 @@ from random import uniform
 import random
 import string
 
-def get_random_string(length):
+IMAGES_PATH = "./IMGres/"
+
+
+def get_name_index(index):
     # choose from all lowercase letter
-    letters = string.ascii_lowercase
-    result_str = ''.join(random.choice(letters) for i in range(length))
-    return result_str
+    return IMAGES_PATH + str(index) + ".png"
 
 def weightedmatrix2function(definition):
     fract = dict()
@@ -81,23 +82,23 @@ def process_file(fract, width, height, iterations=1, outputfile='out.png'):
     # create new image
     image = Image.new( 'RGB', (width, height))
     draw = ImageDraw.Draw(image)
-
+    """
     # plot points
     for point in points:
         x = (point[0] - min_x) * scale
         y = height - (point[1] - min_y) * scale
         draw.point((x,y))
-
+    """
     """
     WARNING
 
-    CREA BOIS MOLTO CICCIONI
-
+    CREA BOIS MOLTO CICCIONI / bello
+    """
     for point in points:
         x = (point[0] - min_x) * width_scale
         y = height - (point[1] - min_y) * height_scale
         draw.point((x,y))
-    """
+    
 
     # save image file
     image.save( outputfile, "PNG" )
