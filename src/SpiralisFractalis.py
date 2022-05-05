@@ -36,14 +36,17 @@ def parse(filename):
     #weightedmatrix2function(definition)
     return definition
 
-def makeNewPoint(x,y, mat):
-    x1 = (x * mat[0][0]) + (y * mat[0][1]) + mat[0][2]
-    y1 = (x * mat[1][0]) + (y * mat[1][1]) + mat[1][2]
+def makeNewPoint(x, y, transform):
+    x1 = (x * transform[0]) + (y * transform[2]) + transform[4]
+    y1 = (x * transform[1]) + (y * transform[3]) + transform[5]
     return (x1,y1)
 
-def process_file(fract, width, height, iterations=1, outputfile='out.png'):
+def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
+    probability_join = 0
+    for transform in fractal:
+        sum += transform[-1]
 
-    probability_join = sum(fract['weights'])
+    #OLD: probability_join = sum(fractal['weights'])
 
     points = set([(0,0)])
 
@@ -53,10 +56,18 @@ def process_file(fract, width, height, iterations=1, outputfile='out.png'):
 
         # for each point
         for point in points:
-
             # decide on which transformation to apply
             rnd = uniform(0, probability_join)
             p_sum = 0
+
+            for transform in fractal:
+                p_sum += transform[-1]
+                if rnd <= p_sum:
+                    new_points.add(makeNewPoint(*point, transform))
+                    break
+                i = i + 1
+
+            """ OLD
             i = 0
             while(i < len(fract['weights'])):
                 p_sum += fract['weights'][i] # sum the single weights
@@ -64,6 +75,7 @@ def process_file(fract, width, height, iterations=1, outputfile='out.png'):
                     new_points.add(makeNewPoint(*point,fract['matrixes'][i]))
                     break
                 i = i + 1
+            """
 
         points.update(new_points)
 
@@ -120,4 +132,4 @@ if __name__ == "__main__":
     else:
         # read contents from stdin
         eval( sys.stdin.read() )
-        process_file( fract, width, height, iterations)
+        #process_file( fract, width, height, iterations)

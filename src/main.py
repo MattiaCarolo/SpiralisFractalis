@@ -2,7 +2,7 @@ from components.App import App
 from SpiralisFractalis import *
 
 
-def main(result):
+def main(fractals, width, height, numIterations):
     
     # root = tk.Tk()
     # MainFrame(root)
@@ -10,7 +10,7 @@ def main(result):
     #for x in result['fract']:
 #        process_file(x, result['width'], result['height'],
     #        result['iterations'],'./IMGres/' + get_random_string(12) + '.png')
-    app = App(fractal=result)
+    app = App(fractals, width, height, numIterations)
     app.mainloop()
  
     # canv = Canvas(root, width=500, height=500, bg='white')
@@ -54,6 +54,27 @@ def main(result):
     # label['image'] = ImageTk.PhotoImage(Image.open("images\SF22.jpg"))
     # root.mainloop()
 
+
+
+
+def getFractalsListFromParsedJson(parsedJSON):
+    pop = list()
+    for fractal in parsedJSON['fract']:
+        fractal = list()
+        for i, x in enumerate(fractal["weights"]) :
+            transform = fractal['matrixes'][i]
+            fractal.append(tuple([
+                transform[0][0],
+                transform[1][0],
+                transform[0][1],
+                transform[1][1],
+                transform[0][2],
+                transform[1][2],
+                x
+            ]))
+        pop.append(fractal)
+    return pop
+
 if __name__ == "__main__":
     import sys
 
@@ -61,14 +82,16 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] != '-':
         # process each filename in input
         for filename in sys.argv[1:]:
-            result = parse(filename)
-            main(result)
-            """
-            process_file(result['fract'], result['width'],
-                         result['height'], result['iterations'],
-                         filename.split('.')[0] + '.png')
-            """
+            parsedJSON = parse(filename)
+            fractals = getFractalsListFromParsedJson(parsedJSON)
+            width = parsedJSON['width']
+            height = parsedJSON['height']
+            numIterations = ['iterations']
+            for fractal in fractals:
+                process_file(fractal, width, height, numIterations, filename.split('.')[0] + '.png')
+                
+            main(fractals, width, height, numIterations)
     else:
         # read contents from stdin
         eval( sys.stdin.read() )
-        process_file( fract, width, height, iterations)
+        #process_file( fract, width, height, iterations)

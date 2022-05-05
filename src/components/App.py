@@ -11,7 +11,7 @@ def update_val(text, value: Label):
 
 
 class App(Tk):
-    def __init__(self,fractal):
+    def __init__(self, fractals, width, height, numIteration):
         super().__init__()
 
         self.main_frame = Frame(self)
@@ -48,7 +48,7 @@ class App(Tk):
             text="EVAL",
             width=5,
             height=2,
-            command=lambda : self.eval(fractal),
+            command=lambda : self.eval(fractals, width, height, numIteration),
         )
         self.send_eval_btn.pack(side=BOTTOM, fill=X)
 
@@ -70,18 +70,19 @@ class App(Tk):
             self.scalas.append(scala)
             self.images.append(img)
 
-    def eval(self,fractal):
-        sorted_dict = self.get_eval_dict()
-        fractals = fractal['fract']
-        population = self.getPopulation(sorted_dict, fractals)
+    def eval(self, fractals, width, height, numIteration):
+        evaluation = self.get_eval_dict()
+        population = self.getRankedPopulation(evaluation, fractals)
         print(population)
 
         self.nuke_the_childrens()
 
+        #TODO: call evolution method
+        #that will return new fractals as list
+
         # init images
-        for i, x in enumerate(fractal['fract']):
-            process_file(x, fractal['width'], fractal['height'],
-             fractal['iterations'], get_name_index(i))
+        for i, x in enumerate(fractals):
+            process_file(x, width, height, numIteration, get_name_index(i))
 
         self.fill_image_frame()
     
@@ -98,25 +99,13 @@ class App(Tk):
             evaluations[self.image_paths[i]] = self.scalas[i].get()
         return evaluations
 
-    def getPopulation(self, sorted_dict, fractals):
-        temp = str()
+    def getRankedPopulation(self, evaluation, fractals):
         pop = list()
-        for key,rank in sorted_dict.items():
-            temp = int(str(key).split('/')[-1].split('.')[0])
-            print(temp)
-            fractal = list()
-            for i, x in enumerate(fractals[temp]["weights"]) :
-                transform = fractals[temp]['matrixes'][i]
-                fractal.append(tuple([
-                    transform[0][0],
-                    transform[1][0],
-                    transform[0][1],
-                    transform[1][1],
-                    transform[0][2],
-                    transform[1][2],
-                    x
-                ]))
-            pop.append(tuple([
-                fractal, rank
-            ]))
+        for key,rank in evaluation.items():
+            index = int(str(key).split('/')[-1].split('.')[0])
+            fractRankList = [
+                fractals[index], 
+                rank 
+            ]
+            pop.append(fractRankList)
         return pop
