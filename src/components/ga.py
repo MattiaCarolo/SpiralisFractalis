@@ -1,9 +1,55 @@
 from cgi import parse_multipart
 from secrets import choice
-from inspyred import ec
 import numpy as np
 from random import choices, randint, uniform
 
+
+from dataclasses import dataclass, field
+from typing import List
+from copy import deepcopy
+
+@dataclass()
+class Fractal:
+    transformations: List[List[float]] = field(default_factory=list)
+    score: int = 0
+    
+    def mutate(self):
+        for i in range(len(self.transformations)):
+            for j in range(len(self.transformations[i])):
+                self.transformations[i][j] = self.transformations[i][j] + (0.1 * np.random.randn())
+    
+    def copy(self):
+        return Fractal(transformations=deepcopy(self.transformations), score=self.score)
+    
+    @classmethod
+    def cross_over(cls, parents, n_genes):
+        transformations = []
+        for p in parents:
+            for t in p.transformations:
+                transformations.append(t.copy())
+        length = len(transformations)
+        weights = [1/length for _ in range(length)]
+        return cls(choices(transformations,weights, k= n_genes))
+    
+    
+
+def evolutionV2(population: List[Fractal]):
+    mutated_pop = [] 
+    for fractal in population:
+        mutated_pop.append(fractal.copy())
+        if uniform(0, 1) < MUTATION_P:
+            fractal.mutate()
+            mutated_pop.append(fractal.copy())
+    total_fitness = sum([f.score for f in mutated_pop])
+    prob_sel = [f.score/total_fitness for f in mutated_pop]
+    final_pop = [] 
+    for _ in range(len(population) - 3):
+        n_parents = randint(2, 4) 
+        parents = choices(mutated_pop, weights=prob_sel, k=n_parents) 
+        n_genes = max([len(fract.transformations) for fract in parents])
+        final_pop.append(Fractal.cross_over(parents, n_genes))
+    population.sort(key = lambda x: x.score)
+    return final_pop + population[:3]
 
 """
 Mutation threshold.
@@ -89,8 +135,28 @@ def evolution(pop_with_eval):
     pop_with_eval.sort(key = lambda x: x[1], reverse = True)
     elite = pop_with_eval[:3] # extract the elite individuals from the current population (pop_with_eval). The elite individuals are selected as the three individuals of the populations that has the higher score
 
-    for e,_ in pop_with_eval[:3]:
+    for e,_ in elite:
         final_pop.append(e)
     #final_pop = final_pop + elite # add the elite individuals to the individuals obtained from mutation and cross-over
 
     return final_pop
+
+
+def main():
+    fake_fractals : List[Fractal]= []
+    for i in range(5):
+        fract = Fractal()
+        for _ in range(5):
+            fract.transformations.append([float(i) for _ in range(7)])
+        fract.score = i
+        fake_fractals.append(fract)
+    
+    
+    evolved =  evolutionV2(fake_fractals)
+    
+   
+    
+
+if __name__ == "__main__":
+    main()
+    
