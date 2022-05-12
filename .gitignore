@@ -143,3 +143,6 @@ dmypy.json
 .pyre/
 robe.py
 .vscode/launch.json
+
+# img/data res folder
+IMGres/
