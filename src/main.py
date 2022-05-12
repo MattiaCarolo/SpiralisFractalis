@@ -1,5 +1,6 @@
 from components.App import App
 from SpiralisFractalis import *
+from components.ga import Fractal
 
 
 def main(fractals, width, height, numIterations):
@@ -15,10 +16,10 @@ def main(fractals, width, height, numIterations):
 def getFractalsListFromParsedJson(parsedJSON):
     pop = list()
     for fractal in parsedJSON['fract']:
-        nfractal = list()
+        transformations = list()
         for i, x in enumerate(fractal["weights"]) :
             transform = fractal['matrixes'][i]
-            nfractal.append([
+            transformations.append([
                 transform[0][0],
                 transform[1][0],
                 transform[0][1],
@@ -27,7 +28,7 @@ def getFractalsListFromParsedJson(parsedJSON):
                 transform[1][2],
                 x
             ])
-        pop.append(nfractal)
+        pop.append(Fractal(transformations=transformations))
     return pop
 
 
@@ -43,8 +44,10 @@ if __name__ == "__main__":
             width = parsedJSON['width']
             height = parsedJSON['height']
             numIterations = parsedJSON['iterations']
+            #i = 0
             #for fractal in fractals:
-            #    process_file(fractal, width, height, numIterations, filename.split('.')[0] + '.png')
+            #    i += 1
+            #    process_file(fractal, width, height, numIterations, './IMGres/' + str(i) + '.png')
                 
             main(fractals, width, height, numIterations)
     else:

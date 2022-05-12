@@ -12,6 +12,9 @@ from copy import deepcopy
 class Fractal:
     transformations: List[List[float]] = field(default_factory=list)
     score: int = 0
+
+    def setScore(self, newScore):
+        self.score = newScore
     
     def mutate(self):
         for i in range(len(self.transformations)):

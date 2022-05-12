@@ -43,7 +43,7 @@ def makeNewPoint(x, y, transform):
 
 def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
 
-    probability_join = sum(x[-1] for x in fractal)
+    probability_join = sum(x[-1] for x in fractal.transformations)
 
     #OLD: probability_join = sum(fractal['weights'])
 
@@ -59,7 +59,7 @@ def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
             rnd = uniform(0, probability_join)
             p_sum = 0
 
-            for transform in fractal:
+            for transform in fractal.transformations:
                 p_sum += transform[-1]
                 if rnd <= p_sum:
                     new_points.add(makeNewPoint(*point, transform))
@@ -86,8 +86,23 @@ def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
     p_width = max_x - min_x
     p_height = max_y - min_y
 
-    width_scale = (width/p_width)
-    height_scale = (height/p_height)
+    #width_scale = (width/p_width)
+
+    if p_width == 0.0:
+        width_scale = width
+    elif width == 0.0:
+        width_scale = 0.0001
+    else:
+        width_scale = (width/p_width)
+
+    if p_width == 0.0:
+        height_scale = width
+    elif width == 0.0:
+        height_scale = 0.0001
+    else:
+        height_scale = (height/p_height)
+
+    #height_scale = (height/p_height)
     scale = min(width_scale, height_scale)
 
     # create new image
@@ -113,22 +128,3 @@ def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
 
     # save image file
     image.save( outputfile, "PNG" )
-
-
-
-if __name__ == "__main__":
-
-    import sys
-
-    # if there is one argument and it's not "-"
-    if len(sys.argv) > 1 and sys.argv[1] != '-':
-        # process each filename in input
-        for filename in sys.argv[1:]:
-            result = parse(filename)
-            process_file(result['fract'], result['width'],
-                         result['height'], result['iterations'],
-                         filename.split('.')[0] + '.png')
-    else:
-        # read contents from stdin
-        eval( sys.stdin.read() )
-        #process_file( fract, width, height, iterations)

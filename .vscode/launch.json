@@ -5,8 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
-            "args": ["datasets/dataset_sm.json"],
+            "name": "Python: Current File small dataset",
+            "args": [
+                "datasets/dataset_sm.json"
+            ],
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Current File medium dataset",
+            "args": [
+                "datasets/dataset_md.json"
+            ],
             "type": "python",
             "request": "launch",
             "program": "${file}",

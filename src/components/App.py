@@ -3,6 +3,7 @@ from tkinter import *
 from utils import get_img, get_images_paths
 from SpiralisFractalis import *
 import components.ga as ga
+from components.ga import Fractal
 
 IMAGES_PATH = "./IMGres/"
 
@@ -61,7 +62,7 @@ class App(Tk):
         self.image_paths = get_images_paths(IMAGES_PATH)
         for i, pth in enumerate(self.image_paths):
 
-            scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
+            scala = Scale(self.images_frame, from_=1, to=100, orient=HORIZONTAL)
             scala.grid(row=i, column=1)
             img = get_img(pth, shape=(100, 100))
 
@@ -82,7 +83,7 @@ class App(Tk):
 
         #TODO: call evolution method
         #that will return new fractals as list
-        fractals = ga.evolution(population)
+        fractals = ga.evolutionV2(population)
 
         # init images
         for i, x in enumerate(fractals):
@@ -104,12 +105,11 @@ class App(Tk):
         return evaluations
 
     def getRankedPopulation(self, evaluation, fractals):
-        pop = list()
+        print(len(fractals))
+        print(evaluation)
         for key,rank in evaluation.items():
+            print(key)
             index = int(str(key).split('/')[-1].split('.')[0])
-            fractRankList = [
-                fractals[index], 
-                rank 
-            ]
-            pop.append(fractRankList)
-        return pop
+            print(index)
+            fractals[index-1].setScore(rank)
+        return fractals
