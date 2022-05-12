@@ -83,13 +83,14 @@ class App(Tk):
 
         #TODO: call evolution method
         #that will return new fractals as list
-        fractals = ga.evolutionV2(population)
+        fractals = ga.evolve(population)
 
         # init images
         for i, x in enumerate(fractals):
             process_file(x, width, height, numIteration, get_name_index(i))
 
         self.fill_image_frame()
+        
     
     def nuke_the_childrens(self):
         for child in self.images_frame.winfo_children():

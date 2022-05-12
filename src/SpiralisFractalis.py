@@ -5,6 +5,8 @@ from PIL import Image, ImageDraw
 from random import uniform
 import random
 import string
+from numba import njit
+import numpy as np
 
 IMAGES_PATH = "./IMGres/"
 
@@ -36,6 +38,7 @@ def parse(filename):
     #weightedmatrix2function(definition)
     return definition
 
+@njit
 def makeNewPoint(x, y, transform):
     x1 = (x * transform[0]) + (y * transform[2]) + transform[4]
     y1 = (x * transform[1]) + (y * transform[3]) + transform[5]
@@ -62,7 +65,7 @@ def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
             for transform in fractal.transformations:
                 p_sum += transform[-1]
                 if rnd <= p_sum:
-                    new_points.add(makeNewPoint(*point, transform))
+                    new_points.add(makeNewPoint(*point, np.array(transform)))
                     break
                 i = i + 1
 
@@ -95,9 +98,9 @@ def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
     else:
         width_scale = (width/p_width)
 
-    if p_width == 0.0:
+    if p_height == 0.0:
         height_scale = width
-    elif width == 0.0:
+    elif height == 0.0:
         height_scale = 0.0001
     else:
         height_scale = (height/p_height)
