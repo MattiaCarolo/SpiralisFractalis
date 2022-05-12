@@ -17,10 +17,8 @@ def get_name_index(index):
 
 def weightedmatrix2function(definition):
     fract = dict()
-    #print(definition['fract'][0]['weights'])
     for x in definition['fract']:
         formulas = dict()
-        #print(x['weights'])
         for y in x['matrixes']:
             formulas["x"]= str(y[0][0]) + "" 
 

@@ -89,7 +89,6 @@ def generate_figures(n, figures, transformations):
 def plot_figures(figures:List[np.ndarray], size:int=4, width:float=1.5, color:str='blue'):
     lines = [ [(1.1, 1.1), (1.1, 1.1)] ]
     for M in figures:
-        print("porco dio")
         lines = lines + [[ (M[0][i], M[1][i]), (M[0][i+1], M[1][i+1]) ] for i in np.arange(len(np.transpose(M))-1)]
     lc = mc.LineCollection(lines[1:], linewidths=width, color=color)
     fig, ax = plt.subplots(figsize=(size,size)) 
