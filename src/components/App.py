@@ -7,6 +7,9 @@ from SpiralisFractalis import *
 import components.ga as ga
 from components.ga import Fractal
 
+import tarfile
+import os.path
+
 IMAGES_PATH = "./IMGres/"
 
 
@@ -90,6 +93,15 @@ class App(Tk):
             process_file(x, width, height, numIteration, get_name_index(i))
 
         self.fill_image_frame()
+
+        
+    def zipGeneration(width, height, numIterations):
+        with tarfile.open("generation", "w:gz") as tar:
+            tar.add(IMAGES_PATH, arcname=os.path.basename(IMAGES_PATH))
+
+    def GenerationJSON(width, height, numIterations):
+        print()
+
         
     
     def nuke_the_childrens(self):
