@@ -7,15 +7,12 @@ from SpiralisFractalis import *
 import components.ga as ga
 from components.ga import Fractal
 
-import tarfile
-import os.path
 
 IMAGES_PATH = "./IMGres/"
 
 
 def update_val(text, value: Label):
     value.config(text=str(int(float(text))))
-
 
 class App(Tk):
     def __init__(self, fractals, width, height, numIteration):
@@ -66,7 +63,11 @@ class App(Tk):
 
     def fill_image_frame(self):
         self.image_paths = get_images_paths(IMAGES_PATH)
-        for i, pth in enumerate(self.image_paths):
+
+        #line to avoid opencv opening the dataset //needs to be cleaned
+        if './IMGres/dataset_md.json' in self.image_paths: self.image_paths.remove('./IMGres/dataset_md.json')
+
+        for i, pth in enumerate(self.image_paths[:-1]):
 
             scala = Scale(self.images_frame, from_=1, to=100, orient=HORIZONTAL)
             scala.grid(row=i, column=1)
@@ -92,16 +93,9 @@ class App(Tk):
         for i, x in enumerate(self.fractals):
             process_file(x, width, height, numIteration, get_name_index(i))
 
+        zipGeneration(width,height,numIteration,self.fractals)
+
         self.fill_image_frame()
-
-        
-    def zipGeneration(width, height, numIterations):
-        with tarfile.open("generation", "w:gz") as tar:
-            tar.add(IMAGES_PATH, arcname=os.path.basename(IMAGES_PATH))
-
-    def GenerationJSON(width, height, numIterations):
-        print()
-
         
     
     def nuke_the_childrens(self):

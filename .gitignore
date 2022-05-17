@@ -11,6 +11,7 @@ graphics/__pycache__
 Images/
 venv/
 *.png
+IMGres/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -143,3 +144,5 @@ dmypy.json
 .pyre/
 robe.py
 .vscode/launch.json
+
+generation.tar.gz
