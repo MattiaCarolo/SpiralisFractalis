@@ -145,4 +145,7 @@ dmypy.json
 robe.py
 .vscode/launch.json
 
+
 generation.tar.gz
+# img/data res folder
+IMGres/
