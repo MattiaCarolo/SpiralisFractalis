@@ -87,7 +87,7 @@ class App(Tk):
         #TODO: zip images
         self.nuke_the_childrens()
 
-        self.fractals = ga.evolve(population)
+        self.fractals = ga.evolve(population)   
 
         # init images
         for i, x in enumerate(self.fractals):
