@@ -1,3 +1,5 @@
+from ast import Try
+import os
 from tkinter import ttk
 from tkinter import *
 from utils import get_img, get_images_paths
@@ -5,17 +7,18 @@ from SpiralisFractalis import *
 import components.ga as ga
 from components.ga import Fractal
 
+
 IMAGES_PATH = "./IMGres/"
 
 
 def update_val(text, value: Label):
     value.config(text=str(int(float(text))))
 
-
 class App(Tk):
     def __init__(self, fractals, width, height, numIteration):
         super().__init__()
 
+        self.fractals = fractals
         self.main_frame = Frame(self)
         self.main_frame.pack(fill=BOTH, expand=1)
 
@@ -50,7 +53,7 @@ class App(Tk):
             text="EVAL",
             width=5,
             height=2,
-            command=lambda : self.eval(fractals, width, height, numIteration),
+            command=lambda : self.eval(width, height, numIteration),
         )
         self.send_eval_btn.pack(side=BOTTOM, fill=X)
 
@@ -60,7 +63,11 @@ class App(Tk):
 
     def fill_image_frame(self):
         self.image_paths = get_images_paths(IMAGES_PATH)
-        for i, pth in enumerate(self.image_paths):
+
+        #line to avoid opencv opening the dataset //needs to be cleaned
+        if './IMGres/dataset_md.json' in self.image_paths: self.image_paths.remove('./IMGres/dataset_md.json')
+
+        for i, pth in enumerate(self.image_paths[:-1]):
 
             scala = Scale(self.images_frame, from_=1, to=100, orient=HORIZONTAL)
             scala.grid(row=i, column=1)
@@ -72,22 +79,21 @@ class App(Tk):
             self.scalas.append(scala)
             self.images.append(img)
 
-    def eval(self, fractals, width, height, numIteration):
+    def eval(self, width, height, numIteration):
+
         evaluation = self.get_eval_dict()
-        population = self.getRankedPopulation(evaluation, fractals)
-        print(population)
+        population = self.getRankedPopulation(evaluation, self.fractals)
 
-
-
+        #TODO: zip images
         self.nuke_the_childrens()
 
-        #TODO: call evolution method
-        #that will return new fractals as list
-        fractals = ga.evolve(population)
+        self.fractals = ga.evolve(population)   
 
         # init images
-        for i, x in enumerate(fractals):
+        for i, x in enumerate(self.fractals):
             process_file(x, width, height, numIteration, get_name_index(i))
+
+        zipGeneration(width,height,numIteration,self.fractals)
 
         self.fill_image_frame()
         
@@ -106,11 +112,10 @@ class App(Tk):
         return evaluations
 
     def getRankedPopulation(self, evaluation, fractals):
-        print(len(fractals))
-        print(evaluation)
         for key,rank in evaluation.items():
-            print(key)
-            index = int(str(key).split('/')[-1].split('.')[0])
-            print(index)
-            fractals[index-1].setScore(rank)
+            index = int(os.path.basename(str(key)).split('.')[0])
+            try:
+                fractals[index].setScore(rank)
+            except IndexError: 
+                print("Indice che da errore: ", index)
         return fractals
