@@ -99,7 +99,10 @@ def evolve(population: List[Fractal]):
 
         # determine the number of genes for the offspring. It is selected as a random number between the number of parents and the maximal length of the genome between the parents
         max_genes = max([len(fract.transformations) for fract in parents])
-        n_genes = randint(n_parents, max_genes) if max_genes!=n_parents else n_parents       
+        if(max_genes!=n_parents):
+            n_genes = randint(n_parents, max_genes)
+        else:
+            n_genes = n_parents       
         
         final_pop.append(Fractal.cross_over(parents, n_genes))
     
