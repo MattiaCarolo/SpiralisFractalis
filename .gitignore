@@ -146,6 +146,9 @@ robe.py
 .vscode/launch.json
 
 
-generation.tar.gz
+generation_*.tar.gz
 # img/data res folder
 IMGres/
+
+# ignore tar generations
+*.tar.gz
