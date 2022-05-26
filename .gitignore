@@ -149,3 +149,6 @@ robe.py
 generation_*.tar.gz
 # img/data res folder
 IMGres/
+
+# ignore tar generations
+*.tar.gz
