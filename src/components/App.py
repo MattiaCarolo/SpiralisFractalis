@@ -69,7 +69,7 @@ class App(Tk):
 
         for i, pth in enumerate(self.image_paths[:-1]):
 
-            scala = Scale(self.images_frame, from_=1, to=100, orient=HORIZONTAL)
+            scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
             scala.grid(row=i, column=1)
             img = get_img(pth, shape=(100, 100))
 
