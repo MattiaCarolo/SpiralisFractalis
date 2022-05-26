@@ -17,7 +17,7 @@ def update_val(text, value: Label):
 class App(Tk):
     def __init__(self, fractals, width, height, numIteration):
         super().__init__()
-
+        self.generation_number = 1
         self.fractals = fractals
         self.main_frame = Frame(self)
         self.main_frame.pack(fill=BOTH, expand=1)
@@ -93,8 +93,9 @@ class App(Tk):
         for i, x in enumerate(self.fractals):
             process_file(x, width, height, numIteration, get_name_index(i))
 
-        zipGeneration(width,height,numIteration,self.fractals)
+        zipGeneration(width,height,numIteration,self.fractals, self.generation_number)
 
+        self.generation_number += 1
         self.fill_image_frame()
         
     

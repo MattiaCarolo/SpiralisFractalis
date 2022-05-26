@@ -3,6 +3,7 @@ from __future__ import division
 import json
 from json import load
 from PIL import Image, ImageDraw
+from utils import getJSONFromFractalList
 from random import uniform
 from numba import njit
 import numpy as np
@@ -134,28 +135,10 @@ def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
     image.save( outputfile, "PNG" )
 
 
-def zipGeneration(width, height, numIterations, fractals):
-    
-    geison = { "iterations": numIterations, "width":width, "height":height}
+def zipGeneration(width, height, numIterations, fractals, generation_number):
+    getJSONFromFractalList(fractals, width, height, numIterations)
 
-    fracs = list()
-    for fractal in fractals:
-        matrixes = list()
-        frac = {"weights": [x[-1] for x in fractal.transformations]}
-        for transformations in fractal.transformations:
-            row1 = [transformations[0],transformations[1],transformations[2]]
-            row2 = [transformations[3],transformations[4],transformations[5]]
-            rows = [row1,row2,[0,0,1.0]]
-            matrixes.append(rows)
-        frac["matrixes"] = matrixes
-        fracs.append(frac)
-    geison["fract"] = fracs
-
-    json_object = json.dumps(geison, indent=4)
-    with open("./IMGres/dataset_md.json", "w") as outfile:
-        outfile.write(json_object)
-
-    with tarfile.open("generation.tar.gz", "w:gz") as tar:
+    with tarfile.open(f"generation_{generation_number}.tar.gz", "w:gz") as tar:
         tar.add(IMAGES_PATH, arcname=os.path.basename(IMAGES_PATH))
 
     #os.remove("/IMGres/dataset_md.json")
