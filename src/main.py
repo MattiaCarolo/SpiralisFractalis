@@ -1,6 +1,6 @@
 from components.App import App
 from SpiralisFractalis import *
-from components.ga import Fractal
+from utils import getFractalsListFromParsedJson
 
 
 def main(fractals, width, height, numIterations):
@@ -10,27 +10,6 @@ def main(fractals, width, height, numIterations):
     app.mainloop()
  
   
-
-
-
-def getFractalsListFromParsedJson(parsedJSON):
-    pop = list()
-    for fractal in parsedJSON['fract']:
-        transformations = list()
-        for i, x in enumerate(fractal["weights"]) :
-            transform = fractal['matrixes'][i]
-            transformations.append([
-                transform[0][0],
-                transform[1][0],
-                transform[0][1],
-                transform[1][1],
-                transform[0][2],
-                transform[1][2],
-                x
-            ])
-        pop.append(Fractal(transformations=transformations))
-    return pop
-
 
 if __name__ == "__main__":
     import sys

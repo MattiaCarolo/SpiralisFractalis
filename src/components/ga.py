@@ -47,7 +47,9 @@ class Fractal:
         t_x_parent = [] # list with one transformation from each parent
         transformations = [] # list with all the transformations of all the parents minus the ones contained in t_x_parent
         for p in parents:
-            for i, t in enumerate(shuffle(p.transformations)):
+            shuffled = p.copy()
+            shuffle(shuffled.transformations)
+            for i, t in enumerate(shuffled.transformations):
                 if i == 0:
                     t_x_parent.append(t.copy())
                 else:
@@ -96,7 +98,14 @@ def evolve(population: List[Fractal]):
         parents = choices(mutated_pop, weights=prob_sel, k=n_parents)  
 
         # determine the number of genes for the offspring. It is selected as a random number between the number of parents and the maximal length of the genome between the parents
-        n_genes = randint(n_parents, max([len(fract.transformations) for fract in parents]))         
+        max_genes = max([len(fract.transformations) for fract in parents])
+        try:
+            if(max_genes != n_parents):
+                n_genes = randint(n_parents, max_genes)
+            else:
+                n_genes = n_parents  
+        except ValueError:
+            n_genes = n_parents
         
         final_pop.append(Fractal.cross_over(parents, n_genes))
     
