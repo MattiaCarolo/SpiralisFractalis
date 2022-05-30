@@ -17,7 +17,7 @@ import os
 import tarfile
 
 IMAGES_PATH = "./IMGres/"
-#STEAL = "./gradient_img/gradient_*.jpeg"
+# STEAL = "./gradient_img/gradient_*.jpeg"
 STEAL = "./gradient_img/natural.jpg"
 SIZE = 1920,1080
 GRADIENT_INDEX = [1,2,3,4,5,6,7,8,9,10]
@@ -48,8 +48,8 @@ def parse(filename):
     #weightedmatrix2function(definition)
     return definition
 
+
 def stealColor(x,y, im):
-    pix = im.load()
     if(int(x) == 1920):
         x  = 1919
     else:
@@ -58,7 +58,7 @@ def stealColor(x,y, im):
         y  = 1079
     else:
         y = int(y)
-    return pix[x,y] # return rgb value
+    return im[x,y] # return rgb value
 
 
 @njit
@@ -157,7 +157,7 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile='ou
         cwidth_scale = (width/cp_width)
 
     if cp_height == 0.0:
-        cheight_scale = height
+        cheight_scale = width
     elif height == 0.0:
         cheight_scale = 0.0001
     else:
@@ -183,7 +183,7 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile='ou
     CREA BOIS MOLTO CICCIONI / bello
     """
     colors = list(colors)
-
+    im = im.load()
     for count, point in enumerate(points):
         x = (point[0] - min_x) * scale
         y = height - (point[1] - min_y) * scale

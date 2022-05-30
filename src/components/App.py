@@ -22,6 +22,8 @@ class App(Tk):
         super().__init__()
         self.generation_number = 1
         self.fractals = fractals
+        self.title("Spiralis Fractalis")
+        self.geometry("1000x800")
         self.main_frame = Frame(self)
         self.main_frame.pack(fill=BOTH, expand=1)
 
@@ -54,8 +56,8 @@ class App(Tk):
             self.main_frame,
             background="#40c4ff",
             text="EVAL",
-            width=5,
-            height=2,
+            width=20,
+            height=100,
             command=lambda: self.eval(width, height, numIteration),
         )
         self.send_eval_btn.pack(side=BOTTOM, fill=X)
@@ -93,7 +95,7 @@ class App(Tk):
 
                 scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
                 scala.grid(row=i, column=1)
-                img = get_img(pth, shape=(100, 100))
+                img = get_img(pth, shape=(300, 200))
 
                 label = ttk.Label(master=self.images_frame, image=img)
                 label.grid(row=i, column=0)
@@ -106,7 +108,7 @@ class App(Tk):
 
                 scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
                 scala.grid(row=i, column=1)
-                img = get_img(pth, shape=(100, 100))
+                img = get_img(pth, shape=(300, 200))
 
                 label = ttk.Label(master=self.images_frame, image=img)
                 label.grid(row=i, column=0)
