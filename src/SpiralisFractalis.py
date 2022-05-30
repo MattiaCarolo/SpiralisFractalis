@@ -19,21 +19,21 @@ import tarfile
 IMAGES_PATH = "./IMGres/"
 # STEAL = "./gradient_img/gradient_*.jpeg"
 STEAL = "./gradient_img/natural.jpg"
-SIZE = 1920,1080
-GRADIENT_INDEX = [1,2,3,4,5,6,7,8,9,10]
+SIZE = 1920, 1080
+GRADIENT_INDEX = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 
 def get_name_index(index):
     # choose from all lowercase letter
     return IMAGES_PATH + str(index) + ".png"
 
+
 def weightedmatrix2function(definition):
     fract = dict()
-    for x in definition['fract']:
+    for x in definition["fract"]:
         formulas = dict()
-        for y in x['matrixes']:
-            formulas["x"]= str(y[0][0]) + "" 
-
+        for y in x["matrixes"]:
+            formulas["x"] = str(y[0][0]) + ""
 
 
 def parse(filename):
@@ -41,47 +41,52 @@ def parse(filename):
         definition = load(f)
 
     # check for errors
-    if "width" not in definition: raise ValueError('"width" parameter missing')
-    if "height" not in definition: raise ValueError('"height" parameter missing')
-    if "iterations" not in definition: raise ValueError('"iterations" parameter missing')
-    if "fract" not in definition: raise ValueError('"fract" parameter missing')
-    #weightedmatrix2function(definition)
+    if "width" not in definition:
+        raise ValueError('"width" parameter missing')
+    if "height" not in definition:
+        raise ValueError('"height" parameter missing')
+    if "iterations" not in definition:
+        raise ValueError('"iterations" parameter missing')
+    if "fract" not in definition:
+        raise ValueError('"fract" parameter missing')
+    # weightedmatrix2function(definition)
     return definition
 
 
-def stealColor(x,y, im):
-    if(int(x) == 1920):
-        x  = 1919
+def stealColor(x, y, im):
+    if int(x) == 1920:
+        x = 1919
     else:
         x = int(x)
-    if(int(y) == 1080):
-        y  = 1079
+    if int(y) == 1080:
+        y = 1079
     else:
         y = int(y)
-    return im[x,y] # return rgb value
+    return im[x, y]  # return rgb value
 
 
 @njit
 def makeNewPoint(x, y, transform):
     x1 = (x * transform[0]) + (y * transform[2]) + transform[4]
     y1 = (x * transform[1]) + (y * transform[3]) + transform[5]
-    return (x1,y1)
+    return (x1, y1)
 
 
-def process_file(fractal, width, height, img_index, iterations=1, outputfile='out.png'):
+def process_file(fractal, width, height, img_index, iterations=1, outputfile="out.png"):
 
     probability_join = sum(x[-1] for x in fractal.transformations)
     f_color = StealerIFS()
 
-    if(img_index == 0):
+    if img_index == 0:
         random.shuffle(GRADIENT_INDEX)
-    im = Image.open(STEAL.replace('*', str(GRADIENT_INDEX[img_index])))
+    im = Image.open(STEAL.replace("*", str(GRADIENT_INDEX[img_index])))
     im = im.resize(SIZE)
 
-    #OLD: probability_join = sum(fractal['weights'])
+    im = np.array(im)
+    # OLD: probability_join = sum(fractal['weights'])
 
-    points = set([(0,0)])
-    colors = set([(0,0)])
+    points = set([(0, 0)])
+    colors = set([(0, 0)])
 
     # for each iteration
     for i in range(iterations):
@@ -97,7 +102,14 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile='ou
                 p_sum += transform[-1]
                 if rnd <= p_sum:
                     new_points.add(makeNewPoint(*point, np.array(transform)))
-                    new_colors.add(makeNewPoint(*point, np.array([item for sublist in f_color[idx] for item in sublist])))
+                    new_colors.add(
+                        makeNewPoint(
+                            *point,
+                            np.array(
+                                [item for sublist in f_color[idx] for item in sublist]
+                            ),
+                        )
+                    )
                     break
                 i = i + 1
 
@@ -110,65 +122,62 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile='ou
                     break
                 i = i + 1
             """
-        #colors.update(new_colors)
+        # colors.update(new_colors)
         colors.update(new_points)
         points.update(new_points)
 
-
     # find out image limits determine scaling and translating
-    min_x = min(points, key=lambda p:p[0])[0]
-    max_x = max(points, key=lambda p:p[0])[0]
-    min_y = min(points, key=lambda p:p[1])[1]
-    max_y = max(points, key=lambda p:p[1])[1]
+    min_x = min(points, key=lambda p: p[0])[0]
+    max_x = max(points, key=lambda p: p[0])[0]
+    min_y = min(points, key=lambda p: p[1])[1]
+    max_y = max(points, key=lambda p: p[1])[1]
     p_width = max_x - min_x
     p_height = max_y - min_y
 
     # find out image limits determine scaling and translating
-    cmin_x = min(points, key=lambda p:p[0])[0]
-    cmax_x = max(points, key=lambda p:p[0])[0]
-    cmin_y = min(points, key=lambda p:p[1])[1]
-    cmax_y = max(points, key=lambda p:p[1])[1]
+    cmin_x = min(points, key=lambda p: p[0])[0]
+    cmax_x = max(points, key=lambda p: p[0])[0]
+    cmin_y = min(points, key=lambda p: p[1])[1]
+    cmax_y = max(points, key=lambda p: p[1])[1]
     cp_width = cmax_x - cmin_x
     cp_height = cmax_y - cmin_y
 
-
-    #width_scale = (width/p_width)
+    # width_scale = (width/p_width)
     if p_width == 0.0:
         width_scale = width
     elif width == 0.0:
         width_scale = 0.0001
     else:
-        width_scale = (width/p_width)
+        width_scale = width / p_width
 
     if p_height == 0.0:
         height_scale = height
     elif height == 0.0:
         height_scale = 0.0001
     else:
-        height_scale = (height/p_height)
+        height_scale = height / p_height
 
-    
-    #width_scale = (width/p_width)
+    # width_scale = (width/p_width)
     if cp_width == 0.0:
         cwidth_scale = width
     elif width == 0.0:
         cwidth_scale = 0.0001
     else:
-        cwidth_scale = (width/cp_width)
+        cwidth_scale = width / cp_width
 
     if cp_height == 0.0:
         cheight_scale = width
     elif height == 0.0:
         cheight_scale = 0.0001
     else:
-        cheight_scale = (height/cp_height)
+        cheight_scale = height / cp_height
 
-    #height_scale = (height/p_height)
+    # height_scale = (height/p_height)
     scale = min(width_scale, height_scale)
     cscale = min(cwidth_scale, cheight_scale)
 
     # create new image
-    image = Image.new( 'RGB', (width, height), color="white")
+    image = Image.new("RGB", (width, height), color="white")
     draw = ImageDraw.Draw(image)
     """
     # plot points
@@ -190,15 +199,15 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile='ou
 
         x_col = (colors[count][0] - min_x) * cscale
         y_col = height - (colors[count][1] - min_y) * cscale
-        #print(point[2])
-        #print(type(point[2]))
+        # print(point[2])
+        # print(type(point[2]))
         try:
-            draw.point((x,y),fill=stealColor(x_col,y_col,im))
+            draw.point((x, y), fill=stealColor(x_col, y_col, im))
         except IndexError:
-            print("X of image equal to {} while Y equals to {}".format(x_col,y_col))
-    
+            print("X of image equal to {} while Y equals to {}".format(x_col, y_col))
+
     # save image file
-    image.save( outputfile, "PNG" )
+    image.save(outputfile, "PNG")
 
 
 def zipGeneration(width, height, numIterations, fractals, generation_number):
@@ -207,4 +216,4 @@ def zipGeneration(width, height, numIterations, fractals, generation_number):
     with tarfile.open(f"generation_{generation_number}.tar.gz", "w:gz") as tar:
         tar.add(IMAGES_PATH, arcname=os.path.basename(IMAGES_PATH))
 
-    #os.remove("/IMGres/dataset_md.json")
+    # os.remove("/IMGres/dataset_md.json")

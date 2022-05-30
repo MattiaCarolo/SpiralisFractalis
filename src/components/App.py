@@ -1,17 +1,17 @@
-from ast import Try
 import os
 from tkinter import ttk
 from tkinter import *
 
-from numpy import False_
+
 from utils import get_img, get_images_paths
 from SpiralisFractalis import *
 import components.ga as ga
-from components.ga import Fractal
+
 
 START_DIR = "./datasets/"
 IMAGES_PATH = "./IMGres/"
 MAX_ITER = 30
+
 
 def update_val(text, value: Label):
     value.config(text=str(int(float(text))))
@@ -23,7 +23,7 @@ class App(Tk):
         self.generation_number = 1
         self.fractals = fractals
         self.title("Spiralis Fractalis")
-        self.geometry("1000x800")
+        self.geometry("1200x800")
         self.main_frame = Frame(self)
         self.main_frame.pack(fill=BOTH, expand=1)
 
@@ -65,12 +65,15 @@ class App(Tk):
     def _on_mouse_wheel(self, event):
         self.canvas.yview_scroll(-1 * int((event.delta / 120)), "units")
 
-
     def open_popup(self):
-        top= Toplevel(self)
+        top = Toplevel(self)
         top.geometry("450x100")
         top.title("Error")
-        Label(top, text= "Please give a score to at least one fractal :(", font=('Times 15 bold')).place(x=50,y=50)
+        Label(
+            top,
+            text="Please give a score to at least one fractal :(",
+            font=("Times 15 bold"),
+        ).place(x=50, y=50)
 
     def fill_image_frame(self):
         self.image_paths = get_images_paths(IMAGES_PATH)
@@ -78,54 +81,61 @@ class App(Tk):
         # line to avoid opencv opening the dataset //needs to be cleaned
         if "./IMGres/dataset_md.json" in self.image_paths:
             self.image_paths.remove("./IMGres/dataset_md.json")
-        if(self.start):
+        if self.start:
             self.image_paths = get_images_paths(START_DIR)
             print(self.image_paths)
-            if ("./datasets/dataset_md.json" in self.image_paths):
+            if "./datasets/dataset_md.json" in self.image_paths:
                 self.image_paths.remove("./datasets/dataset_md.json")
-            if ("./datasets/dataset_md.png" in self.image_paths):
+            if "./datasets/dataset_md.png" in self.image_paths:
                 self.image_paths.remove("./datasets/dataset_md.png")
-            if ("./datasets/dataset_sm.json" in self.image_paths):
+            if "./datasets/dataset_sm.json" in self.image_paths:
                 self.image_paths.remove("./datasets/dataset_sm.json")
-            if ("./datasets/dataset_sm.png" in self.image_paths):
+            if "./datasets/dataset_sm.png" in self.image_paths:
                 self.image_paths.remove("./datasets/dataset_sm.png")
-            if ("./datasets/dataset.json" in self.image_paths):
+            if "./datasets/dataset.json" in self.image_paths:
                 self.image_paths.remove("./datasets/dataset.json")
             for i, pth in enumerate(self.image_paths):
-
                 scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
-                scala.grid(row=i, column=1)
-                img = get_img(pth, shape=(300, 200))
-
+                img = get_img(pth, shape=(250, 200))
                 label = ttk.Label(master=self.images_frame, image=img)
-                label.grid(row=i, column=0)
-
+                if i < 5:
+                    label.grid(row=i, column=0)
+                    scala.grid(row=i, column=1)
+                else:
+                    label.grid(row=i - 5, column=2, padx=(200, 0), pady=5)
+                    scala.grid(
+                        row=i - 5,
+                        column=3,
+                    )
                 self.scalas.append(scala)
                 self.images.append(img)
-                self.start = False 
+                self.start = False
         else:
             for i, pth in enumerate(self.image_paths[:-1]):
 
                 scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
-                scala.grid(row=i, column=1)
-                img = get_img(pth, shape=(300, 200))
+                img = get_img(pth, shape=(250, 200))
 
                 label = ttk.Label(master=self.images_frame, image=img)
-                label.grid(row=i, column=0)
 
+                if i < 5:
+                    label.grid(row=i, column=0)
+                    scala.grid(row=i, column=1)
+                else:
+                    label.grid(row=i - 5, column=2, padx=(200, 0), pady=5)
+                    scala.grid(row=i - 5, column=3)
                 self.scalas.append(scala)
                 self.images.append(img)
 
     def eval(self, width, height, numIteration):
-        
+
         evaluation = self.get_eval_dict()
-        
+
         if sum([v for v in evaluation.values()]) == 0:
             self.open_popup()
             return
-        
-        population = self.getRankedPopulation(evaluation, self.fractals)
 
+        population = self.getRankedPopulation(evaluation, self.fractals)
 
         self.delete_images()
 
@@ -133,7 +143,7 @@ class App(Tk):
 
         # init images
         for i, x in enumerate(self.fractals):
-            process_file(x, width, height,i, MAX_ITER, get_name_index(i))
+            process_file(x, width, height, i, MAX_ITER, get_name_index(i))
 
         zipGeneration(
             width, height, numIteration, self.fractals, self.generation_number
@@ -159,7 +169,7 @@ class App(Tk):
         for key, rank in evaluation.items():
             index = int(os.path.basename(str(key)).split(".")[0])
             try:
-                fractals[index].score = rank 
+                fractals[index].score = rank
             except IndexError:
                 print("Indice che da errore: ", index)
         return fractals
