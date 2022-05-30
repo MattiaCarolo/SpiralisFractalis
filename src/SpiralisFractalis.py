@@ -17,7 +17,8 @@ import os
 import tarfile
 
 IMAGES_PATH = "./IMGres/"
-STEAL = "./gradient_img/gradient_*.jpeg"
+#STEAL = "./gradient_img/gradient_*.jpeg"
+STEAL = "./gradient_img/natural.jpg"
 SIZE = 1920,1080
 GRADIENT_INDEX = [1,2,3,4,5,6,7,8,9,10]
 
@@ -109,7 +110,8 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile='ou
                     break
                 i = i + 1
             """
-        colors.update(new_colors)
+        #colors.update(new_colors)
+        colors.update(new_points)
         points.update(new_points)
 
 
@@ -166,7 +168,7 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile='ou
     cscale = min(cwidth_scale, cheight_scale)
 
     # create new image
-    image = Image.new( 'RGB', (width, height), color="black")
+    image = Image.new( 'RGB', (width, height), color="white")
     draw = ImageDraw.Draw(image)
     """
     # plot points

@@ -23,11 +23,12 @@ if __name__ == "__main__":
             width = parsedJSON['width']
             height = parsedJSON['height']
             numIterations = parsedJSON['iterations']
+            """
             i = 0
             for fractal in fractals:
                i += 1
                process_file(fractal, width, height,i-1, numIterations, get_name_index(i))
-                
+            """
             main(fractals, width, height, numIterations)
     else:
         # read contents from stdin

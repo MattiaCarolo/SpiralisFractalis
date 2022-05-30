@@ -11,6 +11,7 @@ from components.ga import Fractal
 
 START_DIR = "./datasets/"
 IMAGES_PATH = "./IMGres/"
+MAX_ITER = 30
 
 def update_val(text, value: Label):
     value.config(text=str(int(float(text))))
@@ -78,12 +79,17 @@ class App(Tk):
         if(self.start):
             self.image_paths = get_images_paths(START_DIR)
             print(self.image_paths)
-            self.image_paths.remove("./datasets/dataset_md.json")
-            self.image_paths.remove("./datasets/dataset_md.png")
-            self.image_paths.remove("./datasets/dataset_sm.json")
-            self.image_paths.remove("./datasets/dataset_sm.png")
-            self.image_paths.remove("./datasets/dataset.json")
-            for i, pth in enumerate(self.image_paths[:-1]):
+            if ("./datasets/dataset_md.json" in self.image_paths):
+                self.image_paths.remove("./datasets/dataset_md.json")
+            if ("./datasets/dataset_md.png" in self.image_paths):
+                self.image_paths.remove("./datasets/dataset_md.png")
+            if ("./datasets/dataset_sm.json" in self.image_paths):
+                self.image_paths.remove("./datasets/dataset_sm.json")
+            if ("./datasets/dataset_sm.png" in self.image_paths):
+                self.image_paths.remove("./datasets/dataset_sm.png")
+            if ("./datasets/dataset.json" in self.image_paths):
+                self.image_paths.remove("./datasets/dataset.json")
+            for i, pth in enumerate(self.image_paths):
 
                 scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
                 scala.grid(row=i, column=1)
@@ -125,7 +131,7 @@ class App(Tk):
 
         # init images
         for i, x in enumerate(self.fractals):
-            process_file(x, width, height,i, numIteration, get_name_index(i))
+            process_file(x, width, height,i, MAX_ITER, get_name_index(i))
 
         zipGeneration(
             width, height, numIteration, self.fractals, self.generation_number
