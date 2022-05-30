@@ -125,7 +125,7 @@ class App(Tk):
 
         # init images
         for i, x in enumerate(self.fractals):
-            process_file(x, width, height, numIteration, get_name_index(i))
+            process_file(x, width, height,i, numIteration, get_name_index(i))
 
         zipGeneration(
             width, height, numIteration, self.fractals, self.generation_number

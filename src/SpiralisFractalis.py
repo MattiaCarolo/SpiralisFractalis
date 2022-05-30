@@ -11,13 +11,15 @@ from numba import njit
 import numpy as np
 import os.path
 from Stealer import *
+import random
 
 import os
 import tarfile
 
 IMAGES_PATH = "./IMGres/"
-STEAL = "./gradient.jpg"
+STEAL = "./gradient_img/gradient_*.jpeg"
 SIZE = 1920,1080
+GRADIENT_INDEX = [1,2,3,4,5,6,7,8,9,10]
 
 
 def get_name_index(index):
@@ -47,12 +49,12 @@ def parse(filename):
 
 def stealColor(x,y, im):
     pix = im.load()
-    if(int(x) == 800):
-        x  = 799
+    if(int(x) == 1920):
+        x  = 1919
     else:
         x = int(x)
-    if(int(y) == 600):
-        y  = 599
+    if(int(y) == 1080):
+        y  = 1079
     else:
         y = int(y)
     return pix[x,y] # return rgb value
@@ -65,13 +67,15 @@ def makeNewPoint(x, y, transform):
     return (x1,y1)
 
 
-def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
+def process_file(fractal, width, height, img_index, iterations=1, outputfile='out.png'):
 
     probability_join = sum(x[-1] for x in fractal.transformations)
     f_color = StealerIFS()
 
-    im = Image.open(STEAL)
-    #im = im.resize(SIZE)
+    if(img_index == 0):
+        random.shuffle(GRADIENT_INDEX)
+    im = Image.open(STEAL.replace('*', str(GRADIENT_INDEX[img_index])))
+    im = im.resize(SIZE)
 
     #OLD: probability_join = sum(fractal['weights'])
 
@@ -117,9 +121,16 @@ def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
     p_width = max_x - min_x
     p_height = max_y - min_y
 
+    # find out image limits determine scaling and translating
+    cmin_x = min(points, key=lambda p:p[0])[0]
+    cmax_x = max(points, key=lambda p:p[0])[0]
+    cmin_y = min(points, key=lambda p:p[1])[1]
+    cmax_y = max(points, key=lambda p:p[1])[1]
+    cp_width = cmax_x - cmin_x
+    cp_height = cmax_y - cmin_y
+
 
     #width_scale = (width/p_width)
-
     if p_width == 0.0:
         width_scale = width
     elif width == 0.0:
@@ -128,14 +139,31 @@ def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
         width_scale = (width/p_width)
 
     if p_height == 0.0:
-        height_scale = width
+        height_scale = height
     elif height == 0.0:
         height_scale = 0.0001
     else:
         height_scale = (height/p_height)
 
+    
+    #width_scale = (width/p_width)
+    if cp_width == 0.0:
+        cwidth_scale = width
+    elif width == 0.0:
+        cwidth_scale = 0.0001
+    else:
+        cwidth_scale = (width/cp_width)
+
+    if cp_height == 0.0:
+        cheight_scale = height
+    elif height == 0.0:
+        cheight_scale = 0.0001
+    else:
+        cheight_scale = (height/cp_height)
+
     #height_scale = (height/p_height)
     scale = min(width_scale, height_scale)
+    cscale = min(cwidth_scale, cheight_scale)
 
     # create new image
     image = Image.new( 'RGB', (width, height), color="black")
@@ -158,8 +186,8 @@ def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
         x = (point[0] - min_x) * scale
         y = height - (point[1] - min_y) * scale
 
-        x_col = (colors[count][0] - min_x) * scale
-        y_col = height - (colors[count][1] - min_y) * scale
+        x_col = (colors[count][0] - min_x) * cscale
+        y_col = height - (colors[count][1] - min_y) * cscale
         #print(point[2])
         #print(type(point[2]))
         try:
