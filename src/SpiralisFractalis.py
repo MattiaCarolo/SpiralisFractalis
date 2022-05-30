@@ -45,10 +45,19 @@ def parse(filename):
     #weightedmatrix2function(definition)
     return definition
 
+"""
+:param x: x coordinate in image im
+:param y: x coordinate in image im
+:param im: image used to capture colors
+:return RGB_Tuple: returns the RGB value as a tuple in the pixel with (x,y) coordinates
+
+Function that given the coordinates of the pixel and an image, returns the color of the given pixel represented as
+an RGB value
+"""
 def stealColor(x,y, im):
     pix = im.load()
     if(int(x) == 800):
-        x  = 799
+        x  = 799 
     else:
         x = int(x)
     if(int(y) == 600):
@@ -71,7 +80,7 @@ def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
     f_color = StealerIFS()
 
     im = Image.open(STEAL)
-    #im = im.resize(SIZE)
+    im = im.resize(SIZE)
 
     #OLD: probability_join = sum(fractal['weights'])
 
