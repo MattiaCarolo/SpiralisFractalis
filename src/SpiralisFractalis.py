@@ -7,17 +7,19 @@ from tkinter import Y
 from PIL import Image, ImageDraw
 from utils import getJSONFromFractalList
 from random import uniform
-from numba import njit
+#from numba import njit
 import numpy as np
 import os.path
 from Stealer import *
+import random
 
 import os
 import tarfile
 
 IMAGES_PATH = "./IMGres/"
-STEAL = "./gradient.jpg"
+STEAL = "./gradient_img/gradient_*.jpg"
 SIZE = 1920,1080
+GRADIENT_INDEX = [1,2,3,4,5,6,7,8,9,10]
 
 
 def get_name_index(index):
@@ -58,19 +60,20 @@ def stealColor(x,y, im):
     return pix[x,y] # return rgb value
 
 
-@njit
+#@njit
 def makeNewPoint(x, y, transform):
     x1 = (x * transform[0]) + (y * transform[2]) + transform[4]
     y1 = (x * transform[1]) + (y * transform[3]) + transform[5]
     return (x1,y1)
 
 
-def process_file(fractal, width, height, iterations=1, outputfile='out.png'):
+def process_file(fractal, width, height, img_index, iterations=1, outputfile='out.png'):
 
     probability_join = sum(x[-1] for x in fractal.transformations)
     f_color = StealerIFS()
-
-    im = Image.open(STEAL)
+    if(img_index == 0):
+        random.shuffle(GRADIENT_INDEX)
+    im = Image.open(STEAL.replace('*', GRADIENT_INDEX[img_index]))
     #im = im.resize(SIZE)
 
     #OLD: probability_join = sum(fractal['weights'])
