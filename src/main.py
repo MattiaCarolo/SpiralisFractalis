@@ -11,11 +11,6 @@ def main(fractals, width, height, numIterations):
  
   
 
-
-
-
-
-
 if __name__ == "__main__":
     import sys
 

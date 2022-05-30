@@ -2,14 +2,15 @@ from ast import Try
 import os
 from tkinter import ttk
 from tkinter import *
+
+from numpy import False_
 from utils import get_img, get_images_paths
 from SpiralisFractalis import *
 import components.ga as ga
 from components.ga import Fractal
 
-
+START_DIR = "./datasets/"
 IMAGES_PATH = "./IMGres/"
-
 
 def update_val(text, value: Label):
     value.config(text=str(int(float(text))))
@@ -43,7 +44,7 @@ class App(Tk):
         self.canvas.create_window((0, 0), window=self.images_frame, anchor="nw")
 
         self.image_paths = IMAGES_PATH
-
+        self.start = True
         self.scalas = []
         self.images = []
         self.fill_image_frame()
@@ -74,18 +75,38 @@ class App(Tk):
         # line to avoid opencv opening the dataset //needs to be cleaned
         if "./IMGres/dataset_md.json" in self.image_paths:
             self.image_paths.remove("./IMGres/dataset_md.json")
+        if(self.start):
+            self.image_paths = get_images_paths(START_DIR)
+            print(self.image_paths)
+            self.image_paths.remove("./datasets/dataset_md.json")
+            self.image_paths.remove("./datasets/dataset_md.png")
+            self.image_paths.remove("./datasets/dataset_sm.json")
+            self.image_paths.remove("./datasets/dataset_sm.png")
+            self.image_paths.remove("./datasets/dataset.json")
+            for i, pth in enumerate(self.image_paths[:-1]):
 
-        for i, pth in enumerate(self.image_paths[:-1]):
+                scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
+                scala.grid(row=i, column=1)
+                img = get_img(pth, shape=(100, 100))
 
-            scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
-            scala.grid(row=i, column=1)
-            img = get_img(pth, shape=(100, 100))
+                label = ttk.Label(master=self.images_frame, image=img)
+                label.grid(row=i, column=0)
 
-            label = ttk.Label(master=self.images_frame, image=img)
-            label.grid(row=i, column=0)
+                self.scalas.append(scala)
+                self.images.append(img)
+                self.start = False 
+        else:
+            for i, pth in enumerate(self.image_paths[:-1]):
 
-            self.scalas.append(scala)
-            self.images.append(img)
+                scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
+                scala.grid(row=i, column=1)
+                img = get_img(pth, shape=(100, 100))
+
+                label = ttk.Label(master=self.images_frame, image=img)
+                label.grid(row=i, column=0)
+
+                self.scalas.append(scala)
+                self.images.append(img)
 
     def eval(self, width, height, numIteration):
         
