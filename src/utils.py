@@ -1,4 +1,4 @@
-import cv2.cv2 as cv
+import cv2 as cv
 import os
 from PIL import ImageTk, Image
 from components.ga import Fractal
@@ -51,29 +51,3 @@ def getJSONFromFractalList(fractalList: List[Fractal], width, height, numIterati
     json_object = json.dumps(geison, indent=4)
     with open("./IMGres/dataset_md.json", "w") as outfile:
         outfile.write(json_object)
-
-
-    # data = {
-    #     "iterations": numIterations,
-    #     "width": width,
-    #     "height": height,
-    #     "fract": []
-    # }
-    # for fractal in fractalList:
-    #     fract = {
-    #         "weights": [],
-    #         "matrixes": []
-    #     }
-    #     for transform in fractal.transformations:
-    #         fract["weights"].append(transform[-1])
-    #         fract["matrixes"].append([
-    #             [transform[0], transform[2], transform[4]],
-    #             [transform[1], transform[3], transform[5]],
-    #             [0., 0., 1.]
-    #         ])
-
-    #     data["fract"].append(fract)
-    
-    # json_object = json.dumps(data, indent=4)
-    # with open('./IMGres/dataset_md.json', 'w') as outfile:
-    #     outfile.write(json_object)
