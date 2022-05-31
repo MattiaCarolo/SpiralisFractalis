@@ -10,7 +10,7 @@ import components.ga as ga
 
 START_DIR = "./datasets/"
 IMAGES_PATH = "./IMGres/"
-MAX_ITER = 30
+MAX_ITER = 28
 
 
 def update_val(text, value: Label):
@@ -111,7 +111,7 @@ class App(Tk):
                 self.images.append(img)
                 self.start = False
         else:
-            for i, pth in enumerate(self.image_paths[:-1]):
+            for i, pth in enumerate(self.image_paths):
 
                 scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
                 img = get_img(pth, shape=(250, 200))

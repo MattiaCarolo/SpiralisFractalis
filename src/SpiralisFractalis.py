@@ -15,10 +15,11 @@ import random
 
 import os
 import tarfile
+from tqdm import tqdm
 
 IMAGES_PATH = "./IMGres/"
-# STEAL = "./gradient_img/gradient_*.jpeg"
-STEAL = "./gradient_img/natural.jpg"
+STEAL = "./gradient_img/gradient_*.jpeg"
+# STEAL = "./gradient_img/natural.jpg"
 SIZE = 1920, 1080
 GRADIENT_INDEX = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -53,6 +54,7 @@ def parse(filename):
     return definition
 
 
+
 def stealColor(x, y, im):
     if int(x) == 1920:
         x = 1919
@@ -72,6 +74,7 @@ def makeNewPoint(x, y, transform):
     return (x1, y1)
 
 
+
 def process_file(fractal, width, height, img_index, iterations=1, outputfile="out.png"):
 
     probability_join = sum(x[-1] for x in fractal.transformations)
@@ -82,14 +85,14 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     im = Image.open(STEAL.replace("*", str(GRADIENT_INDEX[img_index])))
     im = im.resize(SIZE)
 
-    im = np.array(im)
+    
     # OLD: probability_join = sum(fractal['weights'])
 
     points = set([(0, 0)])
     colors = set([(0, 0)])
 
     # for each iteration
-    for i in range(iterations):
+    for i in tqdm(range(iterations)):
         new_points = set()
         new_colors = set()
         # for each point
@@ -177,7 +180,7 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     cscale = min(cwidth_scale, cheight_scale)
 
     # create new image
-    image = Image.new("RGB", (width, height), color="white")
+    image = Image.new("RGB", (width, height), color="black")
     draw = ImageDraw.Draw(image)
     """
     # plot points
@@ -193,7 +196,8 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     """
     colors = list(colors)
     im = im.load()
-    for count, point in enumerate(points):
+    # im = np.array(im)
+    for count, point in tqdm(enumerate(points)):
         x = (point[0] - min_x) * scale
         y = height - (point[1] - min_y) * scale
 

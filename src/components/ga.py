@@ -119,8 +119,8 @@ def evolve(population: List[Fractal]):
         final_pop.append(Fractal.cross_over(parents, n_genes))
 
     # sort the initial population according to the score of each fractal
-    population.sort(key=lambda x: x.score)
-
+    population.sort(key=lambda x: x.score, reverse=True)
+    
     # add the elite individuals to the individuals obtained from mutation and cross-over. The elite individuals are selected as the three individuals of the populations that has the higher score
     final_pop += population[:3]
 
