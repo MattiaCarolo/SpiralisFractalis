@@ -50,9 +50,8 @@ class Fractal:
     @classmethod
     def cross_over(cls, parents, n_genes):
         t_x_parent = []  # list with one transformation from each parent
-        transformations = (
-            []
-        )  # list with all the transformations of all the parents minus the ones contained in t_x_parent
+        transformations = []
+        # list with all the transformations of all the parents minus the ones contained in t_x_parent
         for p in parents:
             shuffled = p.copy()
             shuffle(shuffled.transformations)
@@ -120,7 +119,7 @@ def evolve(population: List[Fractal]):
 
     # sort the initial population according to the score of each fractal
     population.sort(key=lambda x: x.score, reverse=True)
-    
+
     # add the elite individuals to the individuals obtained from mutation and cross-over. The elite individuals are selected as the three individuals of the populations that has the higher score
     final_pop += population[:3]
 
