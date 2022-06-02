@@ -85,9 +85,10 @@ def evolve(population: List[Fractal]):
         mutated_pop.append(fractal.copy())
 
         if uniform(0, 1) < MUTATION_P:
-            fractal.mutate()
+            new_fractal = fractal.copy()
+            new_fractal.mutate()
             # add the mutated individual to the mutated population
-            mutated_pop.append(fractal.copy())
+            mutated_pop.append(new_fractal)
 
     # Extraction of the probability of being selected as a parent for each individual in the population (fitness-proportionate selection)
     total_fitness = sum([f.score for f in mutated_pop])
