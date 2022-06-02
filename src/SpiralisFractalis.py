@@ -12,10 +12,9 @@ import numpy as np
 import os.path
 from Stealer import *
 import random
-
+from tqdm import tqdm
 import os
 import tarfile
-from tqdm import tqdm
 
 IMAGES_PATH = "./IMGres/"
 STEAL = "./gradient_img/gradient_*.jpeg"
@@ -56,11 +55,11 @@ def parse(filename):
 
 
 def stealColor(x, y, im):
-    if int(x) == 1920:
+    if int(x) >= 1920:
         x = 1919
     else:
         x = int(x)
-    if int(y) == 1080:
+    if int(y) >= 1080:
         y = 1079
     else:
         y = int(y)
@@ -125,8 +124,8 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
                     break
                 i = i + 1
             """
-        # colors.update(new_colors)
-        colors.update(new_points)
+        colors.update(new_colors)
+        #colors.update(new_points)
         points.update(new_points)
 
     # find out image limits determine scaling and translating

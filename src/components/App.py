@@ -23,7 +23,7 @@ class App(Tk):
         self.generation_number = 1
         self.fractals = fractals
         self.title("Spiralis Fractalis")
-        self.geometry("1200x800")
+        self.geometry("1440x900")
         self.main_frame = Frame(self)
         self.main_frame.pack(fill=BOTH, expand=1)
 
@@ -83,7 +83,7 @@ class App(Tk):
             self.image_paths.remove("./IMGres/dataset_md.json")
         if self.start:
             self.image_paths = get_images_paths(START_DIR)
-            print(self.image_paths)
+            
             if "./datasets/dataset_md.json" in self.image_paths:
                 self.image_paths.remove("./datasets/dataset_md.json")
             if "./datasets/dataset_md.png" in self.image_paths:
@@ -94,38 +94,23 @@ class App(Tk):
                 self.image_paths.remove("./datasets/dataset_sm.png")
             if "./datasets/dataset.json" in self.image_paths:
                 self.image_paths.remove("./datasets/dataset.json")
-            for i, pth in enumerate(self.image_paths):
-                scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
-                img = get_img(pth, shape=(250, 200))
-                label = ttk.Label(master=self.images_frame, image=img)
-                if i < 5:
-                    label.grid(row=i, column=0)
-                    scala.grid(row=i, column=1)
-                else:
-                    label.grid(row=i - 5, column=2, padx=(200, 0), pady=5)
-                    scala.grid(
-                        row=i - 5,
-                        column=3,
-                    )
-                self.scalas.append(scala)
-                self.images.append(img)
-                self.start = False
-        else:
-            for i, pth in enumerate(self.image_paths):
+            
+            self.start = False
 
-                scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
-                img = get_img(pth, shape=(250, 200))
+        self.image_paths.sort(key=lambda x: x, reverse=False)
 
-                label = ttk.Label(master=self.images_frame, image=img)
-
-                if i < 5:
-                    label.grid(row=i, column=0)
-                    scala.grid(row=i, column=1)
-                else:
-                    label.grid(row=i - 5, column=2, padx=(200, 0), pady=5)
-                    scala.grid(row=i - 5, column=3)
-                self.scalas.append(scala)
-                self.images.append(img)
+        for i, pth in enumerate(self.image_paths):
+            scala = Scale(self.images_frame, from_=0, to=100, orient=HORIZONTAL)
+            img = get_img(pth, shape=(384, 216))
+            label = ttk.Label(master=self.images_frame, image=img)
+            if i < 5:
+                label.grid(row=i, column=0)
+                scala.grid(row=i, column=1)
+            else:
+                label.grid(row=i - 5, column=2, padx=(100, 0), pady=5)
+                scala.grid(row=i - 5, column=3)
+            self.scalas.append(scala)
+            self.images.append(img)
 
     def eval(self, width, height, numIteration):
 
