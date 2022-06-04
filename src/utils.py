@@ -40,8 +40,8 @@ def getJSONFromFractalList(fractalList: List[Fractal], width, height, numIterati
         matrixes = list()
         frac = {"weights": [x[-1] for x in fractal.transformations]}
         for transformations in fractal.transformations:
-            row1 = [transformations[0],transformations[1],transformations[2]]
-            row2 = [transformations[3],transformations[4],transformations[5]]
+            row1 = [transformations[0],transformations[1],transformations[4]] # a, b, e
+            row2 = [transformations[2],transformations[3],transformations[5]] # c, d, f 
             rows = [row1,row2,[0,0,1.0]]
             matrixes.append(rows)
         frac["matrixes"] = matrixes
