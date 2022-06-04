@@ -53,7 +53,15 @@ def parse(filename):
     return definition
 
 
+"""
+:param x: x coordinate in image im
+:param y: x coordinate in image im
+:param im: image used to capture colors
+:return RGB_Tuple: returns the RGB value as a tuple in the pixel with (x,y) coordinates
 
+Function that given the coordinates of the pixel and an image, returns the color of the given pixel represented as
+an RGB value
+"""
 def stealColor(x, y, im):
     if int(x) >= 1920:
         x = 1919
