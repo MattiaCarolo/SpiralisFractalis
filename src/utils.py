@@ -21,12 +21,12 @@ def getFractalsListFromParsedJson(parsedJSON):
         for i, x in enumerate(fractal["weights"]) :
             transform = fractal['matrixes'][i]
             transformations.append([
-                transform[0][0],
-                transform[1][0],
-                transform[0][1],
-                transform[1][1],
-                transform[0][2],
-                transform[1][2],
+                transform[0][0], # a
+                transform[0][1], # b
+                transform[1][0], # c
+                transform[1][1], # d
+                transform[0][2], # e
+                transform[1][2], # f
                 x
             ])
         pop.append(Fractal(transformations=transformations))
