@@ -7,7 +7,7 @@ from tkinter import Y
 from PIL import Image, ImageDraw
 from utils import getJSONFromFractalList
 from random import uniform
-from numba import njit
+#from numba import njit
 import numpy as np
 import os.path
 from Stealer import *
@@ -66,10 +66,12 @@ def stealColor(x, y, im):
     return im[x, y]  # return rgb value
 
 
-@njit
+#@njit
 def makeNewPoint(x, y, transform):
-    x1 = (x * transform[0]) + (y * transform[2]) + transform[4]
-    y1 = (x * transform[1]) + (y * transform[3]) + transform[5]
+    # w(x,y) = (ax+by+e, cx+dy+f) = (x1, y1)
+    # transform = [a, b, c, d, e, f]
+    x1 = (x * transform[0]) + (y * transform[1]) + transform[4]
+    y1 = (x * transform[2]) + (y * transform[3]) + transform[5]
     return (x1, y1)
 
 
@@ -88,14 +90,15 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     # OLD: probability_join = sum(fractal['weights'])
 
     points = set([(0, 0)])
-    colors = set([(0, 0)])
+    # by using a list for colors, we are sure that # of colors element 
+    # will never be less than # of points elements
+    colors = [(0, 0)]
 
     # for each iteration
     for i in tqdm(range(iterations)):
         new_points = set()
-        new_colors = set()
         # for each point
-        for point in points:
+        for index, point in enumerate(points):
             # decide on which transformation to apply
             rnd = uniform(0, probability_join)
             p_sum = 0
@@ -103,15 +106,11 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
             for idx, transform in enumerate(fractal.transformations):
                 p_sum += transform[-1]
                 if rnd <= p_sum:
+                    # I make a new binary point from previous binary points
                     new_points.add(makeNewPoint(*point, np.array(transform)))
-                    new_colors.add(
-                        makeNewPoint(
-                            *point,
-                            np.array(
-                                [item for sublist in f_color[idx] for item in sublist]
-                            ),
-                        )
-                    )
+                    # I make a new color point from previous color points
+                    colors.append(makeNewPoint(*colors[index], np.array(f_color[idx])))
+                    
                     break
                 i = i + 1
 
@@ -124,8 +123,7 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
                     break
                 i = i + 1
             """
-        colors.update(new_colors)
-        #colors.update(new_points)
+        # here we will probably drop some points as it is a set
         points.update(new_points)
 
     # find out image limits determine scaling and translating
@@ -137,10 +135,10 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     p_height = max_y - min_y
 
     # find out image limits determine scaling and translating
-    cmin_x = min(points, key=lambda p: p[0])[0]
-    cmax_x = max(points, key=lambda p: p[0])[0]
-    cmin_y = min(points, key=lambda p: p[1])[1]
-    cmax_y = max(points, key=lambda p: p[1])[1]
+    cmin_x = min(colors, key=lambda p: p[0])[0]
+    cmax_x = max(colors, key=lambda p: p[0])[0]
+    cmin_y = min(colors, key=lambda p: p[1])[1]
+    cmax_y = max(colors, key=lambda p: p[1])[1]
     cp_width = cmax_x - cmin_x
     cp_height = cmax_y - cmin_y
 
@@ -193,15 +191,15 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
 
     CREA BOIS MOLTO CICCIONI / bello
     """
-    colors = list(colors)
+    
     im = im.load()
     # im = np.array(im)
     for count, point in tqdm(enumerate(points)):
         x = (point[0] - min_x) * scale
         y = height - (point[1] - min_y) * scale
 
-        x_col = (colors[count][0] - min_x) * cscale
-        y_col = height - (colors[count][1] - min_y) * cscale
+        x_col = (colors[count][0] - cmin_x) * cscale
+        y_col = height - (colors[count][1] - cmin_y) * cscale
         # print(point[2])
         # print(type(point[2]))
         try:

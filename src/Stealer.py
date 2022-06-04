@@ -5,7 +5,6 @@ PATH = "./datasets/dataset_md.json"
 
 
 def getFractalsListFromParsedJson(parsedJSON):
-    pop = list()
     max = -1
     for fractal in parsedJSON["fract"]:
         transformations = list()
@@ -13,18 +12,18 @@ def getFractalsListFromParsedJson(parsedJSON):
             transform = fractal["matrixes"][i]
             transformations.append(
                 [
-                    transform[0][0],
-                    transform[1][0],
-                    transform[0][1],
-                    transform[1][1],
-                    transform[0][2],
-                    transform[1][2],
+                    transform[0][0], # a
+                    transform[0][1], # b
+                    transform[1][0], # c
+                    transform[1][1], # d
+                    transform[0][2], # e
+                    transform[1][2], # f
                     x,
                 ]
             )
         if max < len(fractal["weights"]):
             max = len(fractal["weights"])
-            matrixes = fractal["matrixes"]
+            matrixes = transformations
     return max, matrixes
 
 
