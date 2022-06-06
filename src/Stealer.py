@@ -48,6 +48,5 @@ def StealerIFS():
     parsedJSON = parse(PATH)
 
     max, fractals = getFractalsListFromParsedJson(parsedJSON)
-    # print("Il frattale piu grande e {} con matrici {}".format(max,fractals))
 
     return fractals

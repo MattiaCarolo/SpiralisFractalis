@@ -7,7 +7,7 @@ from tkinter import Y
 from PIL import Image, ImageDraw
 from utils import getJSONFromFractalList
 from random import uniform
-#from numba import njit
+from numba import njit
 import numpy as np
 import os.path
 from Stealer import *
@@ -74,7 +74,7 @@ def stealColor(x, y, im):
     return im[x, y]  # return rgb value
 
 
-#@njit
+@njit
 def makeNewPoint(x, y, transform):
     # w(x,y) = (ax+by+e, cx+dy+f) = (x1, y1)
     # transform = [a, b, c, d, e, f]
@@ -93,9 +93,6 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
         random.shuffle(GRADIENT_INDEX)
     im = Image.open(STEAL.replace("*", str(GRADIENT_INDEX[img_index])))
     im = im.resize(SIZE)
-
-    
-    # OLD: probability_join = sum(fractal['weights'])
 
     points = set([(0, 0)])
     # by using a list for colors, we are sure that # of colors element 
@@ -133,7 +130,7 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     p_width = max_x - min_x
     p_height = max_y - min_y
 
-    # find out image limits determine scaling and translating
+    # find out color image limits determine scaling and translating
     cmin_x = min(colors, key=lambda p: p[0])[0]
     cmax_x = max(colors, key=lambda p: p[0])[0]
     cmin_y = min(colors, key=lambda p: p[1])[1]
@@ -149,6 +146,7 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     else:
         width_scale = width / p_width
 
+    # height_scale = (height/p_height)
     if p_height == 0.0:
         height_scale = height
     elif height == 0.0:
@@ -156,7 +154,7 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     else:
         height_scale = height / p_height
 
-    # width_scale = (width/p_width)
+    # cwidth_scale = (width/cp_width)
     if cp_width == 0.0:
         cwidth_scale = width
     elif width == 0.0:
@@ -164,6 +162,7 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     else:
         cwidth_scale = width / cp_width
 
+    # cheight_scale = (height/cp_height)
     if cp_height == 0.0:
         cheight_scale = width
     elif height == 0.0:
@@ -171,7 +170,7 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     else:
         cheight_scale = height / cp_height
 
-    # height_scale = (height/p_height)
+    
     scale = min(width_scale, height_scale)
     cscale = min(cwidth_scale, cheight_scale)
 
@@ -180,15 +179,14 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     draw = ImageDraw.Draw(image)
 
     im = im.load()
-    # im = np.array(im)
+
     for count, point in tqdm(enumerate(points)):
         x = (point[0] - min_x) * scale
         y = height - (point[1] - min_y) * scale
 
         x_col = (colors[count][0] - cmin_x) * cscale
         y_col = height - (colors[count][1] - cmin_y) * cscale
-        # print(point[2])
-        # print(type(point[2]))
+
         try:
             draw.point((x, y), fill=stealColor(x_col, y_col, im))
         except IndexError:
