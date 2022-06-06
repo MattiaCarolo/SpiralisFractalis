@@ -151,3 +151,4 @@ IMGres/
 
 # ignore tar generations
 *.tar.gz
+!requirements.txt
