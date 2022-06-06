@@ -1,11 +1,11 @@
 # Fractalis Spiralis - Bio-Inspired AI Project UNITN a.y. 2021/2022
 
-## What is this project
+## What is this project :question:
 
 We wanted to delve into the generative art field and Fractalis Spiralis is what we got. Fractalis Spiralis combines fractal theory with Evolutionary Algorithms in order to create fractal images that mantains the inner properties of a fractal while creating new patterns without the need of a human to intervene.
 Here the only action the user can do is the one of giving a score to each image according to their own preference
 
-## Structure :monorail:
+## Structure :package:
 
 The source code can be found at `src` folder. There you can find all the files that help building the software.
 More specifically:
@@ -16,7 +16,8 @@ More specifically:
 
 Another important folder is the `datasets` one where we can initialize the population from which we create the new images.
 
-## How to run
+## How to run :computer:
+Before running we suggest to install the basic requirements that are found inside our `requirements.txt` file however you want.
 
 The general basic terminal input to start the project is
 
@@ -30,6 +31,8 @@ if using the normal structure of the project it can be written as
 python main.py datasets/dataset_*.json
 ```
 
-Following this 
+Following this a GUI should appear with the prerendered results of the starting population. Each fractal has a score to be assigned and after that EVAL can be selected in order to start the generation of a new population
 
-credits to https://github.com/rodrigosetti/ifs
+## Credits
+
+For the basic rendering algorithm credits goes to https://github.com/rodrigosetti/ifs that showed a basic point rendering type and gave us an initial idea / implentation of the rendering of IFS fractals and some insights on how to scale the points to the image size
