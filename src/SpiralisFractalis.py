@@ -122,15 +122,6 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
                     break
                 i = i + 1
 
-            """ OLD
-            i = 0
-            while(i < len(fract['weights'])):
-                p_sum += fract['weights'][i] # sum the single weights
-                if rnd <= p_sum:
-                    new_points.add(makeNewPoint(*point,fract['matrixes'][i]))
-                    break
-                i = i + 1
-            """
         # here we will probably drop some points as it is a set
         points.update(new_points)
 
@@ -185,21 +176,9 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     cscale = min(cwidth_scale, cheight_scale)
 
     # create new image
-    image = Image.new("RGB", (width, height), color="black")
+    image = Image.new("RGB", (width, height), color="white")
     draw = ImageDraw.Draw(image)
-    """
-    # plot points
-    for point in points:
-        x = (point[0] - min_x) * scale
-        y = height - (point[1] - min_y) * scale
-        draw.point((x,y))
-    """
-    """
-    WARNING
 
-    CREA BOIS MOLTO CICCIONI / bello
-    """
-    
     im = im.load()
     # im = np.array(im)
     for count, point in tqdm(enumerate(points)):

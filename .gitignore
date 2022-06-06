@@ -10,7 +10,6 @@ graphics/__pycache__
 *.swp
 Images/
 venv/
-*.png
 IMGres/
 
 # Byte-compiled / optimized / DLL files
