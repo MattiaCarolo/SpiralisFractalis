@@ -76,11 +76,7 @@ class App(Tk):
         ).place(x=50, y=50)
 
     def fill_image_frame(self):
-        self.image_paths = get_images_paths(IMAGES_PATH)
 
-        # line to avoid opencv opening the dataset //needs to be cleaned
-        if "./IMGres/dataset_md.json" in self.image_paths:
-            self.image_paths.remove("./IMGres/dataset_md.json")
         if self.start:
             self.image_paths = get_images_paths(START_DIR)
             
@@ -96,6 +92,11 @@ class App(Tk):
                 self.image_paths.remove("./datasets/dataset.json")
             
             self.start = False
+        else: 
+            self.image_paths = get_images_paths(IMAGES_PATH)
+            # line to avoid opencv opening the dataset //needs to be cleaned
+            if "./IMGres/dataset_md.json" in self.image_paths:
+                self.image_paths.remove("./IMGres/dataset_md.json")
 
         self.image_paths.sort(key=lambda x: x, reverse=False)
 

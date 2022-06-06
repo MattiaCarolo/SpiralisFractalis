@@ -11,6 +11,13 @@ def main(fractals, width, height, numIterations):
 
 if __name__ == "__main__":
     import sys
+    import os
+    
+    # Creating log directory
+    try:
+        os.makedirs('IMGres')
+    except OSError:
+        pass
 
     # if there is one argument and it's not "-"
     if len(sys.argv) > 1 and sys.argv[1] != "-":
