@@ -22,13 +22,13 @@ Before running we suggest to install the basic requirements that are found insid
 The general basic terminal input to start the project is
 
 ``` bash
-python main.py <path to transformation dataset>
+python src/main.py <path to transformation dataset>
 ```
 
 if using the normal structure of the project it can be written as
 
 ``` bash
-python main.py datasets/dataset_md.json
+python src/main.py datasets/dataset_md.json
 ```
 
 Following this a GUI should appear with the prerendered results of the starting population. Each fractal has a score to be assigned and after that EVAL can be selected in order to start the generation of a new population. After clicking on EVAL, you should see the progress of the creation of the new fractals on the terminal.
