@@ -1,4 +1,4 @@
-# Fractalis Spiralis - Bio-Inspired AI Project UNITN a.y. 2021/2022
+# Spiralis Fractalis - Bio-Inspired AI Project UNITN a.y. 2021/2022
 
 ## What is this project :question:
 
