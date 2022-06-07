@@ -12,9 +12,9 @@ More specifically:
 
 - Inside `src/components` we can find the frontend of our application represented by `App.py`
 - Still inside the same folder `ga.py` will take care of the evolutionary part
-- The backend part can be found at root level represented by `SpiralisFractalis.py` that will take care of the rendering of both fractals
+- The backend part can be found at root level represented by `SpiralisFractalis.py` that will take care of the rendering and coloring the fractals
 
-Another important folder is the `datasets` one where we can initialize the population from which we create the new images.
+Another important folder is the `datasets` one where we can find the json from which you can reinitialize the population from which we create the new images and the rendered images of from that json (for a quick start)
 
 ## How to run :computer:
 Before running we suggest to install the basic requirements that are found inside our `requirements.txt` file however you want.
@@ -28,10 +28,10 @@ python main.py <path to transformation dataset>
 if using the normal structure of the project it can be written as
 
 ``` bash
-python main.py datasets/dataset_*.json
+python main.py datasets/dataset_md.json
 ```
 
-Following this a GUI should appear with the prerendered results of the starting population. Each fractal has a score to be assigned and after that EVAL can be selected in order to start the generation of a new population
+Following this a GUI should appear with the prerendered results of the starting population. Each fractal has a score to be assigned and after that EVAL can be selected in order to start the generation of a new population. After clicking on EVAL, you should see the progress of the creation of the new fractals on the terminal.
 
 ## Credits
 
