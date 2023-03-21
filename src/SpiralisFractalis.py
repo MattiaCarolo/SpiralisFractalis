@@ -7,7 +7,7 @@ from tkinter import Y
 from PIL import Image, ImageDraw
 from utils import getJSONFromFractalList
 from random import uniform
-from numba import njit
+from numba import jit, cuda, vectorize, guvectorize, float32
 import numpy as np
 import os.path
 from Stealer import *
@@ -25,11 +25,10 @@ GRADIENT_INDEX = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 def get_name_index(index):
     # choose from all lowercase letter
-    return IMAGES_PATH + str(index) + ".png"
+    return f"{IMAGES_PATH}{index}.png" 
 
 
 def weightedmatrix2function(definition):
-    fract = dict()
     for x in definition["fract"]:
         formulas = dict()
         for y in x["matrixes"]:
@@ -71,18 +70,132 @@ def stealColor(x, y, im):
         y = 1079
     else:
         y = int(y)
-    return im[x, y]  # return rgb value
+    return im[x, y]
 
-
-@njit
+#@guvectorize(['(float32, float32, float32[:], float32[:])'],'(),(),(n)->(n)', target='cuda')
+#@vectorize([float32[:](float32,float32,float32[:])])
 def makeNewPoint(x, y, transform):
     # w(x,y) = (ax+by+e, cx+dy+f) = (x1, y1)
     # transform = [a, b, c, d, e, f]
-    x1 = (x * transform[0]) + (y * transform[1]) + transform[4]
-    y1 = (x * transform[2]) + (y * transform[3]) + transform[5]
-    return (x1, y1)
+    #x1 = (x * transform[0]) + (y * transform[1]) + transform[4]
+    #y1 = (x * transform[2]) + (y * transform[3]) + transform[5]
+    #return x1, y1
+    return (
+        (x * transform[0]) + (y * transform[1]) + transform[4],
+        (x * transform[2]) + (y * transform[3]) + transform[5]
+    )
+# 
+# @cuda.jit
+# def makeNewPointX(x, y, transform):
+#     return x * transform[0] + (y * transform[1]) + transform[4]
+# 
+# @cuda.jit
+# def makeNewPointY(x, y, transform):
+#     return x * transform[2] + y * transform[3] + transform[5]
+# 
 
+@jit
+def getWidthScale(p_width:float, width:float): 
+    if p_width == 0.0:
+        return width
+    elif width == 0.0:
+        return 0.0001
+    else:
+        return width / p_width
 
+@jit
+def getHeightScale(p_height:float, height:float):
+    if p_height == 0.0:
+        return height
+    elif height == 0.0:
+        return 0.0001
+    else:
+        return height / p_height
+    
+@jit
+def getCwidthScale(cp_width:float, width:float):
+    if cp_width == 0.0:
+        return width
+    elif width == 0.0:
+        return 0.0001
+    else:
+        return width / cp_width
+
+@jit
+def getCheightScale(cp_height:float, width:float, height:float):
+    if cp_height == 0.0:
+        return width
+    elif height == 0.0:
+        return 0.0001
+    else:
+        return height / cp_height
+
+def getPointsAndColors(fractal, f_color, probability_join, iterations):
+    points = set([(0, 0)])
+    # by using a list for colors, we are sure that # of colors element 
+    # will never be less than # of points elements
+    colors = [(0, 0)]
+    for i in tqdm(range(iterations)):
+        new_points = set()
+        # for each point
+        for index, point in enumerate(points):
+            # decide on which transformation to apply
+            rnd = uniform(0, probability_join)
+            p_sum = 0
+            for idx, transform in enumerate(fractal.transformations):
+                p_sum += transform[-1]
+                
+                
+                if rnd <= p_sum:
+                    #transform = np.array(transform)
+                    #f_color_idx = np.array(f_color[idx])
+                    # I make a new binary point from previous binary points
+                    
+                    
+                    new_points.add(makeNewPoint(point[0], point[1], np.array(transform)))
+                    #new_points.add((
+                    #    makeNewPointX(point[0], point[1], transform),
+                    #    makeNewPointY(point[0], point[1], transform)
+                    #))
+                    # I make a new color point from previous color points
+                    colors.append(makeNewPoint(colors[index][0], colors[index][1], np.array(f_color[idx])))
+                    #colors.append((
+                    #    makeNewPointX(colors[index][0], colors[index][1], f_color_idx),
+                    #    makeNewPointY(colors[index][0], colors[index][1], f_color_idx)
+                    #))
+                    
+                    break
+                i = i + 1
+
+        # here we will probably drop some points as it is a set
+        points.update(new_points)
+        
+    return points, colors
+
+# min = (mix_x, min_y), same for cmin
+def generateImage(src_image, width, height, colors, points, min, cmin, scale, cscale):
+    image = Image.new("RGB", (width, height), color="white")
+    draw = ImageDraw.Draw(image)
+    
+    # src_image = np.array(src_image, dtype=np.float32)
+    src_image = src_image.load()
+        
+    for count, point in tqdm(enumerate(points)):
+        x = (point[0] - min[0]) * scale
+        y = height - (point[1] - min[1]) * scale
+
+        x_col = (colors[count][0] - cmin[0]) * cscale
+        y_col = height - (colors[count][1] - cmin[1]) * cscale
+
+        try:
+            fill = stealColor(x_col, y_col, src_image)
+            draw.point((x, y), fill)
+            
+        except IndexError:
+            print("X of image equal to {} while Y equals to {}".format(x_col, y_col))
+       
+
+    return image
 
 def process_file(fractal, width, height, img_index, iterations=1, outputfile="out.png"):
 
@@ -91,36 +204,11 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
 
     if img_index == 0:
         random.shuffle(GRADIENT_INDEX)
+
     im = Image.open(STEAL.replace("*", str(GRADIENT_INDEX[img_index])))
     im = im.resize(SIZE)
 
-    points = set([(0, 0)])
-    # by using a list for colors, we are sure that # of colors element 
-    # will never be less than # of points elements
-    colors = [(0, 0)]
-
-    # for each iteration
-    for i in tqdm(range(iterations)):
-        new_points = set()
-        # for each point
-        for index, point in enumerate(points):
-            # decide on which transformation to apply
-            rnd = uniform(0, probability_join)
-            p_sum = 0
-
-            for idx, transform in enumerate(fractal.transformations):
-                p_sum += transform[-1]
-                if rnd <= p_sum:
-                    # I make a new binary point from previous binary points
-                    new_points.add(makeNewPoint(*point, np.array(transform)))
-                    # I make a new color point from previous color points
-                    colors.append(makeNewPoint(*colors[index], np.array(f_color[idx])))
-                    
-                    break
-                i = i + 1
-
-        # here we will probably drop some points as it is a set
-        points.update(new_points)
+    points, colors = getPointsAndColors(fractal, f_color, probability_join, iterations)
 
     # find out image limits determine scaling and translating
     min_x = min(points, key=lambda p: p[0])[0]
@@ -139,61 +227,27 @@ def process_file(fractal, width, height, img_index, iterations=1, outputfile="ou
     cp_height = cmax_y - cmin_y
 
     # width_scale = (width/p_width)
-    if p_width == 0.0:
-        width_scale = width
-    elif width == 0.0:
-        width_scale = 0.0001
-    else:
-        width_scale = width / p_width
+    width_scale = getWidthScale(p_width, width)
 
     # height_scale = (height/p_height)
-    if p_height == 0.0:
-        height_scale = height
-    elif height == 0.0:
-        height_scale = 0.0001
-    else:
-        height_scale = height / p_height
+    height_scale = getHeightScale(p_height, height)
 
     # cwidth_scale = (width/cp_width)
-    if cp_width == 0.0:
-        cwidth_scale = width
-    elif width == 0.0:
-        cwidth_scale = 0.0001
-    else:
-        cwidth_scale = width / cp_width
+    cwidth_scale = getCwidthScale(cp_width, width)
 
     # cheight_scale = (height/cp_height)
-    if cp_height == 0.0:
-        cheight_scale = width
-    elif height == 0.0:
-        cheight_scale = 0.0001
-    else:
-        cheight_scale = height / cp_height
-
+    cheight_scale = getCheightScale(cp_height, width, height)
     
     scale = min(width_scale, height_scale)
     cscale = min(cwidth_scale, cheight_scale)
 
     # create new image
-    image = Image.new("RGB", (width, height), color="white")
-    draw = ImageDraw.Draw(image)
-
-    im = im.load()
-
-    for count, point in tqdm(enumerate(points)):
-        x = (point[0] - min_x) * scale
-        y = height - (point[1] - min_y) * scale
-
-        x_col = (colors[count][0] - cmin_x) * cscale
-        y_col = height - (colors[count][1] - cmin_y) * cscale
-
-        try:
-            draw.point((x, y), fill=stealColor(x_col, y_col, im))
-        except IndexError:
-            print("X of image equal to {} while Y equals to {}".format(x_col, y_col))
-
+    image = generateImage(im, width, height, colors, points, (min_x, min_y), (cmin_x, cmin_y), scale, cscale)
+   
     # save image file
     image.save(outputfile, "PNG")
+
+
 
 
 def zipGeneration(width, height, numIterations, fractals, generation_number):

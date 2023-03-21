@@ -2,6 +2,7 @@ import os
 from tkinter import ttk
 from tkinter import *
 
+import concurrent.futures as futures
 
 from utils import get_img, get_images_paths
 from SpiralisFractalis import *
@@ -11,6 +12,7 @@ import components.ga as ga
 START_DIR = "./datasets/"
 IMAGES_PATH = "./IMGres/"
 MAX_ITER = 28
+MAX_CORES = 1 # used for multiprocessing
 
 
 def update_val(text, value: Label):
@@ -117,19 +119,31 @@ class App(Tk):
 
         evaluation = self.get_eval_dict()
 
-        if sum([v for v in evaluation.values()]) == 0:
+        if sum(evaluation.values()) == 0:
             self.open_popup()
             return
 
         population = self.getRankedPopulation(evaluation, self.fractals)
-
         self.delete_images()
 
         self.fractals = ga.evolve(population)
+        
+        # Multiprocessing
+        # proc_res = []
+        #  
+        # with futures.ProcessPoolExecutor(max_workers=MAX_CORES) as executor:
+        #     for i, x in enumerate(self.fractals):
+        #         proc_res.append(executor.submit(process_file, x, width, height, i, MAX_ITER, get_name_index(i)))
+        # 
+        # for i in range(len(proc_res)):
+        #     try:
+        #          proc_res[i].result()
+        #          print(f"Process {i} terminated correctly")
+        #     except Exception as ex:
+        #         print(f"Error in process {i}: [{ex}]")
 
-        # init images
         for i, x in enumerate(self.fractals):
-            process_file(x, width, height, i, MAX_ITER, get_name_index(i))
+           process_file(x, width, height, i, MAX_ITER, get_name_index(i))
 
         zipGeneration(
             width, height, numIteration, self.fractals, self.generation_number
@@ -157,5 +171,5 @@ class App(Tk):
             try:
                 fractals[index].score = rank
             except IndexError:
-                print("Indice che da errore: ", index)
+                print("Error with index ", index)
         return fractals

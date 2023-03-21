@@ -1,15 +1,17 @@
 from components.App import App
-from SpiralisFractalis import *
+from SpiralisFractalis import parse
 from utils import getFractalsListFromParsedJson
 
 
 def main(fractals, width, height, numIterations):
-
     app = App(fractals, width, height, numIterations)
     app.mainloop()
 
 
+
+
 if __name__ == "__main__":
+
     import sys
     import os
     
