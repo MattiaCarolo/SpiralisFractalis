@@ -12,7 +12,7 @@ import components.ga as ga
 START_DIR = "./datasets/"
 IMAGES_PATH = "./IMGres/"
 MAX_ITER = 28
-MAX_CORES = 1 # used for multiprocessing
+MAX_CORES = 8  # used for multiprocessing
 
 
 def update_val(text, value: Label):
@@ -78,10 +78,9 @@ class App(Tk):
         ).place(x=50, y=50)
 
     def fill_image_frame(self):
-
         if self.start:
             self.image_paths = get_images_paths(START_DIR)
-            
+
             if "./datasets/dataset_md.json" in self.image_paths:
                 self.image_paths.remove("./datasets/dataset_md.json")
             if "./datasets/dataset_md.png" in self.image_paths:
@@ -92,9 +91,9 @@ class App(Tk):
                 self.image_paths.remove("./datasets/dataset_sm.png")
             if "./datasets/dataset.json" in self.image_paths:
                 self.image_paths.remove("./datasets/dataset.json")
-            
+
             self.start = False
-        else: 
+        else:
             self.image_paths = get_images_paths(IMAGES_PATH)
             # line to avoid opencv opening the dataset //needs to be cleaned
             if "./IMGres/dataset_md.json" in self.image_paths:
@@ -116,7 +115,6 @@ class App(Tk):
             self.images.append(img)
 
     def eval(self, width, height, numIteration):
-
         evaluation = self.get_eval_dict()
 
         if sum(evaluation.values()) == 0:
@@ -127,26 +125,35 @@ class App(Tk):
         self.delete_images()
 
         self.fractals = ga.evolve(population)
-        
-        # Multiprocessing
-        # proc_res = []
-        #  
-        # with futures.ProcessPoolExecutor(max_workers=MAX_CORES) as executor:
-        #     for i, x in enumerate(self.fractals):
-        #         proc_res.append(executor.submit(process_file, x, width, height, i, MAX_ITER, get_name_index(i)))
-        # 
-        # for i in range(len(proc_res)):
-        #     try:
-        #          proc_res[i].result()
-        #          print(f"Process {i} terminated correctly")
-        #     except Exception as ex:
-        #         print(f"Error in process {i}: [{ex}]")
 
-        for i, x in enumerate(self.fractals):
-           process_file(x, width, height, i, MAX_ITER, get_name_index(i))
+        # Multiprocessing
+        proc_res = []
+
+        with futures.ProcessPoolExecutor(max_workers=MAX_CORES) as executor:
+            for i, x in enumerate(self.fractals):
+                proc_res.append(
+                    executor.submit(
+                        process_file, x, width, height, i, MAX_ITER, get_name_index(i)
+                    )
+                )
+
+        for i in range(len(proc_res)):
+            try:
+                proc_res[i].result()
+                print(f"Process {i} terminated correctly")
+            except Exception as ex:
+                print(f"Error in process {i}: [{ex}]")
+
+        # for i, x in enumerate(self.fractals):
+        #    process_file(x, width, height, i, MAX_ITER, get_name_index(IMAGES_PATH, i))
 
         zipGeneration(
-            width, height, numIteration, self.fractals, self.generation_number
+            IMAGES_PATH,
+            width,
+            height,
+            numIteration,
+            self.fractals,
+            self.generation_number,
         )
 
         self.generation_number += 1

@@ -1,4 +1,3 @@
-from typing import List
 from json import load
 
 PATH = "./datasets/dataset_md.json"
@@ -12,12 +11,12 @@ def getFractalsListFromParsedJson(parsedJSON):
             transform = fractal["matrixes"][i]
             transformations.append(
                 [
-                    transform[0][0], # a
-                    transform[0][1], # b
-                    transform[1][0], # c
-                    transform[1][1], # d
-                    transform[0][2], # e
-                    transform[1][2], # f
+                    transform[0][0],  # a
+                    transform[0][1],  # b
+                    transform[1][0],  # c
+                    transform[1][1],  # d
+                    transform[0][2],  # e
+                    transform[1][2],  # f
                     x,
                 ]
             )
@@ -47,6 +46,6 @@ def parse(filename):
 def StealerIFS():
     parsedJSON = parse(PATH)
 
-    max, fractals = getFractalsListFromParsedJson(parsedJSON)
+    _, fractals = getFractalsListFromParsedJson(parsedJSON)
 
     return fractals
