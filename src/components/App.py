@@ -133,7 +133,7 @@ class App(Tk):
             for i, x in enumerate(self.fractals):
                 proc_res.append(
                     executor.submit(
-                        process_file, x, width, height, i, MAX_ITER, get_name_index(i)
+                        process_file, x, width, height, i, MAX_ITER, get_name_index(IMAGES_PATH, i)
                     )
                 )
 
