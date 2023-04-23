@@ -15,7 +15,7 @@ import tarfile
 
 STEAL = "./gradient_img/gradient_*.jpeg"
 FINAL_SIZE = 1920, 1080
-REDUCED_SIZE = 1024, 768
+REDUCED_SIZE = 1920, 1080
 GRADIENT_INDEX = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 
@@ -74,8 +74,8 @@ def stealColor(x, y, im):
 @jit
 def makeNewPoint(x, y, transform):
     return (
-        round((x * transform[0]) + (y * transform[1]) + transform[4], 3),
-        round((x * transform[2]) + (y * transform[3]) + transform[5], 3),
+        round((x * transform[0]) + (y * transform[1]) + transform[4], 5),
+        round((x * transform[2]) + (y * transform[3]) + transform[5], 5),
     )
 
 
