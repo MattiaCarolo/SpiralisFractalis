@@ -31,8 +31,8 @@ if using the normal structure of the project it can be written as
 python src/main.py datasets/dataset_md.json
 ```
 
-Following, a GUI should appear with the pre-rendered results of the starting population. Each fractal has a score to be assigned and, after, EVAL can be selected in order to start the generation of a new population. After clicking on EVAL, you should see the progress of the creation of the new fractals on the terminal.
+Following, a GUI should appear with the pre-rendered results of the starting population. Each fractal has a score to be assigned and then EVAL can be selected in order to start the generation of a new population. After clicking on EVAL, you should see the progress of the creation of the new fractals on the terminal.
 
 ## Credits
 
-For the basic rendering algorithm credits goes to https://github.com/rodrigosetti/ifs that showed a basic point rendering type and gave us an initial idea / implentation of the rendering of IFS fractals and some insights on how to scale the points to the image size
+For the basic rendering algorithm credits goes to https://github.com/rodrigosetti/ifs that showed a basic point rendering type and gave us an initial idea / implentation of the rendering of IFS fractals and some insights on how to scale the points to the image size.
