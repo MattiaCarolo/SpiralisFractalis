@@ -14,10 +14,10 @@ More specifically:
 - Still inside the same folder `ga.py` will take care of the evolutionary part
 - The backend part can be found at root level represented by `SpiralisFractalis.py` that will take care of the rendering and coloring the fractals
 
-Another important folder is the `datasets` one where we can find the json from which you can reinitialize the population from which we create the new images and the rendered images of from that json (for a quick start)
+Another important folder is `datasets`, where we can find the json from which you can reinitialize the population.
 
 ## How to run :computer:
-Before running we suggest to install the basic requirements that are found inside our `requirements.txt` file however you want.
+Before running, we suggest to install the basic requirements that are found inside our `requirements.txt` file however you want.
 
 The general basic terminal input to start the project is
 
