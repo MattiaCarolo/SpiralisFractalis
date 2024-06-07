@@ -3,7 +3,7 @@
 ## What is this project :question:
 
 We wanted to delve into the *generative art field* and Fractalis Spiralis is what we got. Fractalis Spiralis combines fractal theory with *Evolutionary Algorithms* in order to create fractal images that mantains the inner properties of a fractal while creating new patterns without the need of a human to intervene.
-Here the only action the user can do is giving a score to each image according to their own preference
+Here, the only action the user can do is giving a score to each image according to their own preference
 
 ## Structure :package:
 
